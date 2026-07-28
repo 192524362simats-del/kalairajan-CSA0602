@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <math.h>
+
+int main() {
+    // Given points
+    int x[] = {-2, 3, 0, 5, -1};
+    int y[] = {-1, 4, 0, 1, -2};
+
+    int n = 5;
+    float minDist, dist;
+    int p1 = 0, p2 = 1;
+    int comparisons = 0;
+
+    // Distance between first two points
+    minDist = sqrt(pow(x[0] - x[1], 2) + pow(y[0] - y[1], 2));
+
+    printf("Pairwise Distances:\n\n");
+
+    // Brute Force Comparison
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+
+            dist = sqrt(pow(x[i] - x[j], 2) + pow(y[i] - y[j], 2));
+
+            printf("Distance between (%d,%d) and (%d,%d) = %.2f\n",
+                   x[i], y[i], x[j], y[j], dist);
+
+            comparisons++;
+
+            if (dist < minDist) {
+                minDist = dist;
+                p1 = i;
+                p2 = j;
+            }
+        }
+    }
+
+    printf("\n---------------------------------\n");
+    printf("Closest Pair: (%d,%d) and (%d,%d)\n",
+           x[p1], y[p1], x[p2], y[p2]);
+
+    printf("Minimum Distance = %.2f\n", minDist);
+    printf("Total Pairwise Comparisons = %d\n", comparisons);
+
+    printf("\nTime Complexity = O(n^2)\n");
+
+    return 0;
+}
