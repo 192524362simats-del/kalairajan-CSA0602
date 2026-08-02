@@ -1,0 +1,34 @@
+import math
+
+class Point:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+def distance(p1, p2):
+    return math.sqrt(math.pow(p1.x - p2.x, 2) +
+                     math.pow(p1.y - p2.y, 2))
+
+# Example usage:
+points = [
+    Point(1, 2),
+    Point(4, 5),
+    Point(7, 8),
+    Point(3, 1)
+]
+
+min_dist = float('inf')
+p1_closest = None
+p2_closest = None
+
+for i in range(len(points)):
+    for j in range(i + 1, len(points)):
+        dist = distance(points[i], points[j])
+
+        if dist < min_dist:
+            min_dist = dist
+            p1_closest = points[i]
+            p2_closest = points[j]
+
+print(f"Closest pair: ({p1_closest.x},{p1_closest.y}) and ({p2_closest.x},{p2_closest.y})")
+print(f"Distance = {min_dist}")
