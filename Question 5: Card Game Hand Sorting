@@ -1,0 +1,52 @@
+import random
+
+
+def bubble_sort_hand(hand):
+    # Make a copy so the original hand is not modified
+    cards = hand.copy()
+    n = len(cards)
+    passes = 0
+
+    # Optimized Bubble Sort
+    for i in range(n - 1):
+        swapped = False
+        passes += 1
+
+        for j in range(n - 1 - i):
+            if cards[j] > cards[j + 1]:
+                cards[j], cards[j + 1] = cards[j + 1], cards[j]
+                swapped = True
+
+        # Stop early if no swaps occurred
+        if not swapped:
+            break
+
+    return cards, passes
+
+
+# Nearly sorted hand
+hand = [2, 4, 6, 8, 9, 11, 13]
+
+# Add one new card
+hand.append(7)
+
+final_hand, passes_incremental = bubble_sort_hand(hand)
+
+assert final_hand == sorted(hand)
+
+
+# Create a shuffled version
+shuffled = hand.copy()
+random.shuffle(shuffled)
+
+_, passes_full = bubble_sort_hand(shuffled)
+
+assert passes_incremental <= passes_full
+
+
+print("Original nearly sorted hand:", hand)
+print("Sorted hand:", final_hand)
+print("Passes for nearly sorted hand:", passes_incremental)
+print("Passes for shuffled hand:", passes_full)
+
+print("All test cases passed!")
