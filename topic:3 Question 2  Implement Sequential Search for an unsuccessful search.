@@ -1,0 +1,21 @@
+def sequential_search(arr, key):
+    comparisons = 0
+
+    for i in range(len(arr)):
+        comparisons += 1
+
+        if arr[i] == key:
+            print("Element found at position", i + 1)
+            print("Number of comparisons =", comparisons)
+            return
+
+    print("Element not found")
+    print("Number of comparisons =", comparisons)
+
+
+# Input
+arr = [5, 10, 15, 20, 25, 30, 35]
+key = 18
+
+# Sequential Search
+sequential_search(arr, key)
