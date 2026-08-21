@@ -1,0 +1,21 @@
+def first_occurrence(arr, key):
+    comparisons = 0
+
+    for i in range(len(arr)):
+        comparisons += 1
+
+        if arr[i] == key:
+            print("First occurrence at position", i + 1)
+            print("Number of comparisons =", comparisons)
+            return
+
+    print("Element not found")
+    print("Number of comparisons =", comparisons)
+
+
+# Input
+arr = [10, 25, 15, 25, 30, 25, 40]
+key = 25
+
+# Sequential Search
+first_occurrence(arr, key)
