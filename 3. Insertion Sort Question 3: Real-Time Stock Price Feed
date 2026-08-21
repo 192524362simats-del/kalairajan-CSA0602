@@ -1,0 +1,36 @@
+def insert_price(prices, price):
+    # Binary search for the correct position
+    low = 0
+    high = len(prices)
+
+    while low < high:
+        mid = (low + high) // 2
+
+        if prices[mid] < price:
+            low = mid + 1
+        else:
+            high = mid
+
+    # Insert the price at the correct position
+    prices.insert(low, price)
+
+    return prices
+
+
+# Test cases
+prices = []
+
+for p in [102.5, 98.3, 105.1, 100.0, 97.8]:
+    prices = insert_price(prices, p)
+    print("After inserting", p, ":", prices)
+
+# Verify sorted order
+assert prices == sorted([102.5, 98.3, 105.1, 100.0, 97.8])
+
+# O(1) min/max lookup
+assert prices[0] == min(prices)
+assert prices[-1] == max(prices)
+
+print("\nAll test cases passed!")
+print("Minimum price:", prices[0])
+print("Maximum price:", prices[-1])
