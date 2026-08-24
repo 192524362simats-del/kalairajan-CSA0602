@@ -1,0 +1,43 @@
+# Exponentiation using Iterative and Recursive Methods
+
+
+# Iterative Method
+
+def iterative_power(x, n):
+
+    result = 1
+
+    for i in range(n):
+        result = result * x
+
+    return result
+
+
+# Recursive Fast Power Method
+
+def fast_power(x, n):
+
+    if n == 0:
+        return 1
+
+    if n % 2 == 0:
+        half = fast_power(x, n // 2)
+        return half * half
+
+    else:
+        return x * fast_power(x, n - 1)
+
+
+x = 2
+n = 10
+
+iterative_result = iterative_power(x, n)
+
+recursive_result = fast_power(x, n)
+
+print("Base:", x)
+print("Power:", n)
+
+print("Result using Iterative Method:", iterative_result)
+
+print("Result using Recursive Fast Power:", recursive_result)
