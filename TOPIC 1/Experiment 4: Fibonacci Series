@@ -1,0 +1,56 @@
+# Fibonacci using Iterative Method
+
+n = 6
+
+a = 0
+b = 1
+series = []
+
+for i in range(n):
+    series.append(a)
+    a, b = b, a + b
+
+print("Iterative:", series)
+
+
+# Fibonacci using Recursive Method
+
+def fibonacci(n):
+
+    if n <= 1:
+        return n
+
+    return fibonacci(n - 1) + fibonacci(n - 2)
+
+
+recursive_series = []
+
+for i in range(n):
+    recursive_series.append(fibonacci(i))
+
+print("Recursive:", recursive_series)
+
+
+# Fibonacci using Recursive Method with Memoization
+
+memo = {}
+
+def fibonacci_memo(n):
+
+    if n <= 1:
+        return n
+
+    if n in memo:
+        return memo[n]
+
+    memo[n] = fibonacci_memo(n - 1) + fibonacci_memo(n - 2)
+
+    return memo[n]
+
+
+memo_series = []
+
+for i in range(n):
+    memo_series.append(fibonacci_memo(i))
+
+print("Recursive with Memoization:", memo_series)
