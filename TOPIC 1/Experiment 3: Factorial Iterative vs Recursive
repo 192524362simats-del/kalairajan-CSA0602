@@ -1,0 +1,24 @@
+# Factorial using Iterative Method
+
+n = 5
+
+fact = 1
+
+for i in range(1, n + 1):
+    fact = fact * i
+
+print("Factorial using Iterative Method =", fact)
+
+
+# Factorial using Recursive Method
+
+def factorial(n):
+    if n == 0 or n == 1:
+        return 1
+    else:
+        return n * factorial(n - 1)
+
+
+result = factorial(n)
+
+print("Factorial using Recursive Method =", result)
