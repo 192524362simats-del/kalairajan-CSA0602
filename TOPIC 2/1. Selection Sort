@@ -1,0 +1,32 @@
+def top_k_scores(scores, k):
+
+    scores = scores.copy()
+
+    n = len(scores)
+
+    k = min(k, n)
+
+    for i in range(k):
+
+        max_index = i
+
+        for j in range(i + 1, n):
+
+            if scores[j] > scores[max_index]:
+                max_index = j
+
+        scores[i], scores[max_index] = scores[max_index], scores[i]
+
+    return scores[:k]
+
+
+# Test Case 1
+assert top_k_scores([72, 88, 65, 90, 77, 95, 60, 83, 91, 68], 5) == [95, 91, 90, 88, 83]
+
+# Test Case 2
+assert top_k_scores([5, 3, 1], 5) == [5, 3, 1]
+
+# Test Case 3
+assert top_k_scores([], 3) == []
+
+print("All test cases passed!")
