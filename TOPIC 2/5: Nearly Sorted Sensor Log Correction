@@ -1,0 +1,49 @@
+import random
+
+
+def insertion_sort_count_shifts(log):
+    shifts = 0
+
+    for i in range(1, len(log)):
+        key = log[i]
+        j = i - 1
+
+        # Shift larger elements to the right
+        while j >= 0 and log[j] > key:
+            log[j + 1] = log[j]
+            shifts += 1
+            j -= 1
+
+        # Insert the key into its correct position
+        log[j + 1] = key
+
+    return log, shifts
+
+
+# Test Case 1: Nearly sorted sensor log
+log = [18.2, 18.5, 18.9, 17.9, 19.1, 19.4, 19.0]
+
+sorted_log, shifts_nearly = insertion_sort_count_shifts(log.copy())
+
+assert sorted_log == sorted(log)
+
+print("Nearly sorted log:", sorted_log)
+print("Nearly-sorted shifts:", shifts_nearly)
+
+
+# Test Case 2: Randomly shuffled log
+shuffled_log = log.copy()
+random.shuffle(shuffled_log)
+
+original_shuffled = shuffled_log.copy()
+
+sorted_random, shifts_random = insertion_sort_count_shifts(shuffled_log)
+
+assert sorted_random == sorted(log)
+
+print("\nRandomly shuffled log:", original_shuffled)
+print("Sorted shuffled log:", sorted_random)
+print("Random shifts:", shifts_random)
+
+
+print("\nAll test cases passed!")
