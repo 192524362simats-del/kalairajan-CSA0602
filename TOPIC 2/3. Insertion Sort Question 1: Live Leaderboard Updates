@@ -1,0 +1,48 @@
+def insert_updated_score(board, new_score):
+    # Create a copy so the original leaderboard is not modified
+    result = board.copy()
+    shifts = 0
+
+    # Start from the end of the leaderboard
+    i = len(result) - 1
+
+    # Shift smaller scores to the right
+    while i >= 0 and result[i] < new_score:
+        if i == len(result) - 1:
+            # Make space for the new score
+            result.append(result[i])
+        else:
+            result[i + 1] = result[i]
+
+        shifts += 1
+        i -= 1
+
+    # Insert the updated score
+    if len(result) == len(board):
+        result.append(new_score)
+    else:
+        result[i + 1] = new_score
+
+    return result, shifts
+
+
+# Test Case 1
+board = [980, 875, 760, 690, 500]
+
+updated_board, shifts = insert_updated_score(board, 820)
+
+assert updated_board == [980, 875, 820, 760, 690, 500]
+
+print("Updated leaderboard:", updated_board)
+print("Number of shifts:", shifts)
+
+
+# Test Case 2: Lowest score
+board2, shifts2 = insert_updated_score(board, 100)
+
+assert board2[-1] == 100 and shifts2 == 0
+
+print("\nUpdated leaderboard:", board2)
+print("Number of shifts:", shifts2)
+
+print("\nAll test cases passed!")
