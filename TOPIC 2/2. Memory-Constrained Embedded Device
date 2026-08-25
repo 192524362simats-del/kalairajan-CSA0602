@@ -1,0 +1,45 @@
+def selection_sort_min_writes(arr):
+    n = len(arr)
+    swaps = 0
+
+    for i in range(n - 1):
+        min_index = i
+
+        # Find the minimum element
+        for j in range(i + 1, n):
+            if arr[j] < arr[min_index]:
+                min_index = j
+
+        # Swap only if needed
+        if min_index != i:
+            arr[i], arr[min_index] = arr[min_index], arr[i]
+            swaps += 1
+
+    return arr, swaps
+
+
+# Test Case 1
+data = [23.5, 19.2, 25.1, 18.8, 21.4]
+
+res, sw = selection_sort_min_writes(data)
+
+assert res == sorted([23.5, 19.2, 25.1, 18.8, 21.4])
+assert sw <= len(res) - 1
+
+print("Sorted array:", res)
+print("Number of swaps:", sw)
+print("Maximum possible swaps:", len(res) - 1)
+
+
+# Test Case 2: Already sorted
+data2 = [1, 2, 3, 4, 5]
+
+res2, sw2 = selection_sort_min_writes(data2)
+
+assert res2 == [1, 2, 3, 4, 5]
+assert sw2 == 0
+
+print("\nAlready sorted array:", res2)
+print("Number of swaps:", sw2)
+
+print("\nAll test cases passed!")
