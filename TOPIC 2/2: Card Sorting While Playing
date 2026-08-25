@@ -1,0 +1,30 @@
+def pick_up_card(hand, card):
+    # Add the new card at the end
+    hand.append(card)
+
+    # Start from the newly added card
+    i = len(hand) - 1
+
+    # Shift larger cards to the right
+    while i > 0 and hand[i - 1] > hand[i]:
+        hand[i], hand[i - 1] = hand[i - 1], hand[i]
+        i -= 1
+
+    return hand
+
+
+# Test Case 1: Pick up cards one by one
+hand = []
+
+for card in [7, 2, 9, 4, 1]:
+    hand = pick_up_card(hand, card)
+    print(f"Picked up {card}: {hand}")
+
+assert hand == sorted([7, 2, 9, 4, 1])
+
+
+# Test Case 2: First card
+assert pick_up_card([], 5) == [5]
+
+print("\nFinal hand:", hand)
+print("All test cases passed!")
