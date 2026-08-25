@@ -1,0 +1,45 @@
+def reorder_shelf(books):
+    n = len(books)
+    moves = 0
+
+    for i in range(n - 1):
+        min_index = i
+
+        # Compare book IDs to find the smallest ID
+        for j in range(i + 1, n):
+            if books[j] < books[min_index]:
+                min_index = j
+
+        # Physical move only when required
+        if min_index != i:
+            books[i], books[min_index] = books[min_index], books[i]
+            moves += 1
+
+    return books, moves
+
+
+# Test Case 1
+books = [305, 102, 250, 118, 199, 400, 101]
+
+ordered, moves = reorder_shelf(books)
+
+assert ordered == sorted([305, 102, 250, 118, 199, 400, 101])
+assert moves <= len(ordered) - 1
+
+print("Ordered shelf:", ordered)
+print("Physical moves:", moves)
+print("Maximum possible moves:", len(ordered) - 1)
+
+
+# Test Case 2: Already sorted
+books2 = [100, 200, 300]
+
+ordered2, moves2 = reorder_shelf(books2)
+
+assert ordered2 == [100, 200, 300]
+assert moves2 == 0
+
+print("\nAlready ordered shelf:", ordered2)
+print("Physical moves:", moves2)
+
+print("\nAll test cases passed!")
