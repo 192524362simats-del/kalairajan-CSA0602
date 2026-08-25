@@ -1,0 +1,48 @@
+def bubble_sort_queue(queue):
+    # Assign priority values
+    # Higher number = higher priority
+    priority = {
+        'ambulance': 3,
+        'bus': 2,
+        'car': 1
+    }
+
+    n = len(queue)
+
+    # Bubble sort based on priority
+    for i in range(n - 1):
+        swapped = False
+
+        for j in range(n - 1 - i):
+            if priority[queue[j]] < priority[queue[j + 1]]:
+                queue[j], queue[j + 1] = queue[j + 1], queue[j]
+                swapped = True
+
+        # Stop if queue is already ordered
+        if not swapped:
+            break
+
+    return queue
+
+
+# Test Case 1: Add ambulance to the queue
+queue = ['car', 'car', 'bus']
+
+queue.append('ambulance')
+
+result = bubble_sort_queue(queue)
+
+assert result == ['ambulance', 'bus', 'car', 'car']
+
+print("Priority Queue:", result)
+
+
+# Test Case 2: Single vehicle
+result2 = bubble_sort_queue(['ambulance'])
+
+assert result2 == ['ambulance']
+
+print("Single Vehicle Queue:", result2)
+
+
+print("\nAll test cases passed!")
