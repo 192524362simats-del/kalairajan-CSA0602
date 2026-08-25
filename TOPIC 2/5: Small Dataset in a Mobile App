@@ -1,0 +1,48 @@
+import time
+
+
+def selection_sort(arr):
+    n = len(arr)
+
+    # Selection sort
+    for i in range(n - 1):
+        min_index = i
+
+        for j in range(i + 1, n):
+            if arr[j] < arr[min_index]:
+                min_index = j
+
+        # Swap only when necessary
+        if min_index != i:
+            arr[i], arr[min_index] = arr[min_index], arr[i]
+
+    return arr
+
+
+# Test Case 1: 8 items
+prices = [499, 129, 899, 45, 275, 60, 310, 150]
+
+start_time = time.perf_counter()
+
+result = selection_sort(prices.copy())
+
+end_time = time.perf_counter()
+
+execution_time = (end_time - start_time) * 1_000_000
+
+assert result == sorted([499, 129, 899, 45, 275, 60, 310, 150])
+
+print("Original prices:", prices)
+print("Sorted prices:", result)
+print(f"Execution time: {execution_time:.2f} microseconds")
+
+
+# Test Case 2: Empty list
+assert selection_sort([]) == []
+
+
+# Test Case 3: Single item
+assert selection_sort([7]) == [7]
+
+
+print("All test cases passed!")
