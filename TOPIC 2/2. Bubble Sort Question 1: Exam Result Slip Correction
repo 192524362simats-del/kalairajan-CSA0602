@@ -1,0 +1,46 @@
+def optimized_bubble_sort(arr):
+    n = len(arr)
+    passes = 0
+
+    for i in range(n - 1):
+        swapped = False
+        passes += 1
+
+        # Compare adjacent elements
+        for j in range(n - 1 - i):
+            if arr[j] > arr[j + 1]:
+                # Swap elements
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+                swapped = True
+
+        # Stop if no swaps occurred
+        if not swapped:
+            break
+
+    return arr, passes
+
+
+# Test Case 1: Nearly sorted roll numbers
+roll_numbers = [101, 102, 104, 103, 105, 107, 106, 108]
+
+sorted_rolls, passes = optimized_bubble_sort(roll_numbers.copy())
+
+assert sorted_rolls == sorted(
+    [101, 102, 104, 103, 105, 107, 106, 108]
+)
+assert passes < 8
+
+print("Sorted roll numbers:", sorted_rolls)
+print("Number of passes:", passes)
+
+
+# Test Case 2: Already sorted
+sorted_ok, passes_ok = optimized_bubble_sort([1, 2, 3, 4, 5])
+
+assert sorted_ok == [1, 2, 3, 4, 5]
+assert passes_ok == 1
+
+print("\nAlready sorted:", sorted_ok)
+print("Number of passes:", passes_ok)
+
+print("\nAll test cases passed!")
