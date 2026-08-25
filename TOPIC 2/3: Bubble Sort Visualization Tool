@@ -1,0 +1,43 @@
+def bubble_sort_with_frames(arr):
+    frames = []
+
+    # Store the original array as the first frame
+    frames.append(arr.copy())
+
+    n = len(arr)
+
+    for i in range(n - 1):
+        swapped = False
+
+        # Bubble sort pass
+        for j in range(n - 1 - i):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+                swapped = True
+
+        # Store array state after every pass
+        frames.append(arr.copy())
+
+        # Stop if array is already sorted
+        if not swapped:
+            break
+
+    return frames
+
+
+# Test Case
+input_array = [5, 1, 4, 2, 8]
+
+frames = bubble_sort_with_frames(input_array.copy())
+
+assert frames[-1] == sorted([5, 1, 4, 2, 8])
+assert frames[0] == [5, 1, 4, 2, 8]
+assert len(frames) >= 2
+
+
+# Display all frames
+print("Bubble Sort Visualization:")
+for i, frame in enumerate(frames):
+    print(f"Pass {i}: {frame}")
+
+print("\nAll test cases passed!")
