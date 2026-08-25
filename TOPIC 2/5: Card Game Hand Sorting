@@ -1,0 +1,53 @@
+def bubble_sort_hand(hand):
+    n = len(hand)
+    passes = 0
+
+    for i in range(n - 1):
+        swapped = False
+        passes += 1
+
+        # Compare adjacent cards
+        for j in range(n - 1 - i):
+            if hand[j] > hand[j + 1]:
+                hand[j], hand[j + 1] = hand[j + 1], hand[j]
+                swapped = True
+
+        # Stop when the hand is sorted
+        if not swapped:
+            break
+
+    return hand, passes
+
+
+# Test Case 1: Nearly sorted hand
+hand = [2, 4, 6, 8, 9, 11, 13]
+
+# Add one new card
+hand.append(7)
+
+final_hand, passes_incremental = bubble_sort_hand(hand.copy())
+
+assert final_hand == sorted(hand)
+
+print("Nearly sorted hand:", final_hand)
+print("Incremental sorting passes:", passes_incremental)
+
+
+# Test Case 2: Fully shuffled hand
+import random
+
+shuffled = hand.copy()
+random.shuffle(shuffled)
+
+original_shuffled = shuffled.copy()
+
+_, passes_full = bubble_sort_hand(shuffled)
+
+assert shuffled == sorted(original_shuffled)
+
+assert passes_incremental <= passes_full
+
+print("\nShuffled hand:", original_shuffled)
+print("Full sorting passes:", passes_full)
+
+print("\nAll test cases passed!")
