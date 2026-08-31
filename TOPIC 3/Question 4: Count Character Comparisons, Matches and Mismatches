@@ -1,0 +1,34 @@
+# Brute Force String Matching
+# Count comparisons, matches and mismatches
+
+text = "ABABABABAB"
+pattern = "ABAB"
+
+n = len(text)
+m = len(pattern)
+
+comparisons = 0
+matches = 0
+mismatches = 0
+positions = []
+
+for i in range(n - m + 1):
+    j = 0
+
+    while j < m:
+        comparisons += 1
+
+        if text[i + j] == pattern[j]:
+            matches += 1
+            j += 1
+        else:
+            mismatches += 1
+            break
+
+    if j == m:
+        positions.append(i + 1)
+
+print("Occurrences at positions:", positions)
+print("Total character comparisons =", comparisons)
+print("Total matches =", matches)
+print("Total mismatches =", mismatches)
