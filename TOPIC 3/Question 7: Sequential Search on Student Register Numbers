@@ -1,0 +1,15 @@
+# Sequential Search on Student Register Numbers
+
+register_numbers = [101, 102, 103, 104, 105, 106]
+search_key = 104
+
+found = False
+
+for i in range(len(register_numbers)):
+    if register_numbers[i] == search_key:
+        print("Register Number found at position", i + 1)
+        found = True
+        break
+
+if not found:
+    print("Register Number not found")
