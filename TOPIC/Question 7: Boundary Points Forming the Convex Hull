@@ -1,0 +1,65 @@
+# Convex Hull - Basic Brute Force Approach
+
+points = [(1, 2), (3, 1), (5, 3), (4, 6), (2, 5)]
+
+
+# Calculate cross product
+def cross_product(a, b, c):
+    return ((b[0] - a[0]) * (c[1] - a[1]) -
+            (b[1] - a[1]) * (c[0] - a[0]))
+
+
+def convex_hull(points):
+    hull = []
+    n = len(points)
+
+    # Check every pair of points
+    for i in range(n):
+        for j in range(i + 1, n):
+
+            left = False
+            right = False
+
+            for k in range(n):
+                if k == i or k == j:
+                    continue
+
+                cross = cross_product(points[i], points[j], points[k])
+
+                if cross > 0:
+                    left = True
+                elif cross < 0:
+                    right = True
+
+            # If all other points are on one side,
+            # the pair forms a hull edge
+            if not (left and right):
+                if points[i] not in hull:
+                    hull.append(points[i])
+
+                if points[j] not in hull:
+                    hull.append(points[j])
+
+    # Calculate center
+    center_x = sum(p[0] for p in hull) / len(hull)
+    center_y = sum(p[1] for p in hull) / len(hull)
+
+    # Sort points around the center
+    import math
+
+    hull.sort(
+        key=lambda p: math.atan2(
+            p[1] - center_y,
+            p[0] - center_x
+        )
+    )
+
+    return hull
+
+
+hull = convex_hull(points)
+
+print("Convex Hull Points:")
+
+for point in hull:
+    print(point)
