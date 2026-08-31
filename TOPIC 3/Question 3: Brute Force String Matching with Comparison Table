@@ -1,0 +1,28 @@
+# Brute Force String Matching with Comparison Table
+
+text = "MISSISSIPPI"
+pattern = "ISSI"
+
+n = len(text)
+m = len(pattern)
+
+print("Shift\tComparisons Made\tResult")
+
+for shift in range(n - m + 1):
+    comparisons = []
+    match = True
+
+    for j in range(m):
+        comparisons.append(
+            text[shift + j] + "=" + pattern[j]
+            if text[shift + j] == pattern[j]
+            else text[shift + j] + "!=" + pattern[j]
+        )
+
+        if text[shift + j] != pattern[j]:
+            match = False
+            break
+
+    result = "Match" if match else "Mismatch"
+
+    print(shift, "\t", ", ".join(comparisons), "\t", result)
