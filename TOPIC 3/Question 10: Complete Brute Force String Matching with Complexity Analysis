@@ -1,0 +1,44 @@
+# Brute Force String Matching
+
+text = "TTATAGATCTCGTATTCTTTATAGATCTCCTATTCTT"
+pattern = "TATCTT"
+
+n = len(text)
+m = len(pattern)
+
+positions = []
+total_comparisons = 0
+
+print("Text    :", text)
+print("Pattern :", pattern)
+print("\nShifting Process:")
+
+for shift in range(n - m + 1):
+    print("\nShift", shift)
+
+    j = 0
+
+    while j < m:
+        total_comparisons += 1
+
+        if text[shift + j] == pattern[j]:
+            print("  ", text[shift + j], "=", pattern[j], "-> Match")
+            j += 1
+        else:
+            print("  ", text[shift + j], "!=", pattern[j], "-> Mismatch")
+            break
+
+    if j == m:
+        positions.append(shift + 1)
+        print("  Pattern found at position", shift + 1)
+    else:
+        print("  Shift to next position")
+
+print("\n--- Final Result ---")
+
+if positions:
+    print("Pattern occurrences at positions:", positions)
+else:
+    print("Pattern not found")
+
+print("Total comparisons =", total_comparisons)
