@@ -1,0 +1,40 @@
+     # Brute Force String Matching
+# Compare Successful and Unsuccessful Searches
+
+text = "PROGRAMMINGLAB"
+patterns = ["LAB", "TEST"]
+
+for pattern in patterns:
+    n = len(text)
+    m = len(pattern)
+
+    comparisons = 0
+    position = -1
+
+    for i in range(n - m + 1):
+        j = 0
+
+        while j < m:
+            comparisons += 1
+
+            if text[i + j] == pattern[j]:
+                j += 1
+            else:
+                break
+
+        if j == m:
+            position = i + 1   # 1-based position
+            break
+
+    if position != -1:
+        print("Pattern:", pattern)
+        print("Search: Successful")
+        print("Position =", position)
+        print("Comparison count =", comparisons)
+    else:
+        print("Pattern:", pattern)
+        print("Search: Unsuccessful")
+        print("Pattern not found")
+        print("Comparison count =", comparisons)
+
+    print()
