@@ -1,0 +1,15 @@
+# Sequential Search for String Data
+
+names = ["Anu", "Bala", "Charan", "Deepa", "Esha", "Farhan"]
+search_name = "Deepa"
+
+found = False
+
+for i in range(len(names)):
+    if names[i] == search_name:
+        print("Name found at position", i + 1)
+        found = True
+        break
+
+if not found:
+    print("Name not found")
