@@ -1,0 +1,29 @@
+# Brute Force String Matching
+# Determine the number of character comparisons
+
+text = "AAAAAAAAAB"
+pattern = "AAAAB"
+
+n = len(text)
+m = len(pattern)
+
+comparisons = 0
+position = -1
+
+for i in range(n - m + 1):
+    j = 0
+
+    while j < m:
+        comparisons += 1
+
+        if text[i + j] == pattern[j]:
+            j += 1
+        else:
+            break
+
+    if j == m:
+        position = i + 1
+        break
+
+print("Pattern found at position:", position)
+print("Number of comparisons =", comparisons)
