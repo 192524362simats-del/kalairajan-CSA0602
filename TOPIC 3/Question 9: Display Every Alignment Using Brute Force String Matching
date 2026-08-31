@@ -1,0 +1,27 @@
+# Brute Force String Matching - Display Every Alignment
+
+text = "ABCDABCABCDA"
+pattern = "ABCDA"
+
+n = len(text)
+m = len(pattern)
+
+alignment = 0
+positions = []
+
+for i in range(n - m + 1):
+    alignment += 1
+    j = 0
+
+    while j < m and text[i + j] == pattern[j]:
+        j += 1
+
+    if j == m:
+        result = "Match"
+        positions.append(i + 1)  # 1-based position
+    else:
+        result = "Mismatch"
+
+    print("Alignment", alignment, ":", result)
+
+print("\nPattern occurrence positions:", positions)
