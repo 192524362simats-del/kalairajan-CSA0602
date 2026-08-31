@@ -1,0 +1,41 @@
+# Sentinel Sequential Search vs Ordinary Sequential Search
+
+arr = [14, 9, 22, 35, 18, 41, 27]
+key = 18
+
+# Ordinary Sequential Search
+comparisons_ordinary = 0
+position_ordinary = -1
+
+for i in range(len(arr)):
+    comparisons_ordinary += 1
+
+    if arr[i] == key:
+        position_ordinary = i + 1
+        break
+
+# Sentinel Sequential Search
+sentinel_arr = arr.copy()
+sentinel_arr.append(key)
+
+comparisons_sentinel = 0
+i = 0
+
+while True:
+    comparisons_sentinel += 1
+
+    if sentinel_arr[i] == key:
+        break
+
+    i += 1
+
+position_sentinel = i + 1
+
+# Display results
+print("Ordinary Sequential Search:")
+print("Position found =", position_ordinary)
+print("Comparison count =", comparisons_ordinary)
+
+print("\nSentinel Sequential Search:")
+print("Position found =", position_sentinel)
+print("Comparison count =", comparisons_sentinel)
