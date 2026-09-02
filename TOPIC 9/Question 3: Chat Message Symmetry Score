@@ -1,0 +1,62 @@
+def symmetry_ratio(message):
+    n = len(message)
+
+    # Handle empty message
+    if n == 0:
+        return 0.0
+
+    # Create DP table
+    dp = [[0] * n for _ in range(n)]
+
+    # A single character is always a palindrome
+    for i in range(n):
+        dp[i][i] = 1
+
+    # Check substrings of increasing length
+    for length in range(2, n + 1):
+        for i in range(n - length + 1):
+            j = i + length - 1
+
+            if message[i] == message[j]:
+                if length == 2:
+                    dp[i][j] = 2
+                else:
+                    dp[i][j] = dp[i + 1][j - 1] + 2
+            else:
+                dp[i][j] = max(dp[i + 1][j], dp[i][j - 1])
+
+    # Longest Palindromic Subsequence length
+    lps = dp[0][n - 1]
+
+    # Calculate symmetry ratio
+    return lps / n
+
+
+# Test Cases
+assert round(symmetry_ratio("bbbab"), 2) == 0.8
+assert round(symmetry_ratio("cbbd"), 2) == 0.5
+
+print("All test cases passed!")
+
+# Example messages
+message1 = "bbbab"
+message2 = "cbbd"
+
+ratio1 = symmetry_ratio(message1)
+ratio2 = symmetry_ratio(message2)
+
+print(f"{message1} Symmetry Ratio = {ratio1:.2f}")
+print(f"{message2} Symmetry Ratio = {ratio2:.2f}")
+
+# Flag messages with ratio above threshold
+threshold = 0.75
+
+if ratio1 > threshold:
+    print(f"{message1} is flagged as unusually symmetric.")
+else:
+    print(f"{message1} is not flagged.")
+
+if ratio2 > threshold:
+    print(f"{message2} is flagged as unusually symmetric.")
+else:
+    print(f"{message2} is not flagged.")
