@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <math.h>
+#include <float.h>
+
+struct Point {
+    double x;
+    double y;
+};
+
+// Function to calculate Euclidean distance
+double euclideanDistance(struct Point p1, struct Point p2) {
+    double dx = p1.x - p2.x;
+    double dy = p1.y - p2.y;
+
+    return sqrt(dx * dx + dy * dy);
+}
+
+// Function to find closest pair using brute force
+void findClosestPair(struct Point points[], int n) {
+    double minDistance = DBL_MAX;
+    int p1 = 0, p2 = 1;
+
+    // Compare every possible pair
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+
+            double distance = euclideanDistance(points[i], points[j]);
+
+            if (distance < minDistance) {
+                minDistance = distance;
+                p1 = i;
+                p2 = j;
+            }
+        }
+    }
+
+    printf("Closest pair: (%.1f, %.1f) - (%.1f, %.1f)\n",
+           points[p1].x, points[p1].y,
+           points[p2].x, points[p2].y);
+
+    printf("Minimum distance: %.15f\n", minDistance);
+}
+
+int main() {
+
+    struct Point points[] = {
+        {10, 20},
+        {15, 25},
+        {30, 40},
+        {12, 22}
+    };
+
+    int n = sizeof(points) / sizeof(points[0]);
+
+    findClosestPair(points, n);
+
+    return 0;
+}
