@@ -1,0 +1,67 @@
+#include <stdio.h>
+
+void mergeArrays(int a[], int n, int b[], int m, int result[]) {
+    int i = 0, j = 0, k = 0;
+
+    /* Compare elements from both sorted arrays */
+    while (i < n && j < m) {
+        if (a[i] <= b[j]) {
+            result[k++] = a[i++];
+        } else {
+            result[k++] = b[j++];
+        }
+    }
+
+    /* Copy remaining elements of array a */
+    while (i < n) {
+        result[k++] = a[i++];
+    }
+
+    /* Copy remaining elements of array b */
+    while (j < m) {
+        result[k++] = b[j++];
+    }
+}
+
+void displayArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d", arr[i]);
+
+        if (i < n - 1)
+            printf(",");
+    }
+    printf("\n");
+}
+
+int main() {
+    int n, m;
+
+    printf("Enter size of first array: ");
+    scanf("%d", &n);
+
+    int a[n];
+
+    printf("Enter first sorted array:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &a[i]);
+    }
+
+    printf("Enter size of second array: ");
+    scanf("%d", &m);
+
+    int b[m];
+
+    printf("Enter second sorted array:\n");
+    for (int i = 0; i < m; i++) {
+        scanf("%d", &b[i]);
+    }
+
+    int result[n + m];
+
+    mergeArrays(a, n, b, m, result);
+
+    printf("\nMerged Array : ");
+    displayArray(result, n + m);
+
+    return 0;
+}
