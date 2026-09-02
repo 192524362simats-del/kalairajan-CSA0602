@@ -1,0 +1,121 @@
+def karatsuba_with_count(x, y, counter):
+    """
+    Karatsuba multiplication with recursive call counting.
+    counter[0] stores the total number of calls.
+    """
+
+    # Count every function call, including base cases
+    counter[0] += 1
+
+    # Base case
+    if x < 10 or y < 10:
+        return x * y
+
+    # Number of digits
+    n = max(len(str(x)), len(str(y)))
+    m = n // 2
+
+    # Split x and y
+    power = 10 ** m
+
+    high_x = x // power
+    low_x = x % power
+
+    high_y = y // power
+    low_y = y % power
+
+    # Three recursive multiplications
+    z2 = karatsuba_with_count(high_x, high_y, counter)
+    z0 = karatsuba_with_count(low_x, low_y, counter)
+
+    z1 = karatsuba_with_count(
+        high_x + low_x,
+        high_y + low_y,
+        counter
+    )
+
+    # z1 = (high_x + low_x)(high_y + low_y)
+    z1 = z1 - z2 - z0
+
+    # Combine the results
+    result = (
+        z2 * (10 ** (2 * m))
+        + z1 * (10 ** m)
+        + z0
+    )
+
+    return result
+
+
+def schoolbook_multiplications(n):
+    """
+    Number of digit-level multiplications
+    required by schoolbook multiplication.
+    """
+    return n * n
+
+
+# ---------------------------------------------------------
+# Test Case 1
+# ---------------------------------------------------------
+
+counter = [0]
+
+result = karatsuba_with_count(1234, 5678, counter)
+
+assert result == 1234 * 5678
+assert counter[0] > 0
+
+print("Test Case 1")
+print("------------")
+print("Input      : 1234 × 5678")
+print("Result     :", result)
+print("Karatsuba recursive calls:", counter[0])
+
+
+# ---------------------------------------------------------
+# Test Case 2
+# ---------------------------------------------------------
+
+counter2 = [0]
+
+result2 = karatsuba_with_count(9, 9, counter2)
+
+assert result2 == 9 * 9
+assert counter2[0] == 1
+
+print("\nTest Case 2")
+print("------------")
+print("Input      : 9 × 9")
+print("Result     :", result2)
+print("Karatsuba recursive calls:", counter2[0])
+
+
+# ---------------------------------------------------------
+# Compare Increasing Digit Lengths
+# ---------------------------------------------------------
+
+print("\nGrowth Comparison")
+print("-----------------")
+print("Digits | Karatsuba Calls | Schoolbook Multiplications")
+
+for digits in [2, 4, 8, 16, 32]:
+
+    x = int('7' * digits)
+    y = int('3' * digits)
+
+    counter = [0]
+
+    result = karatsuba_with_count(x, y, counter)
+
+    assert result == x * y
+
+    schoolbook_count = schoolbook_multiplications(digits)
+
+    print(
+        f"{digits:6} | "
+        f"{counter[0]:16} | "
+        f"{schoolbook_count:25}"
+    )
+
+print("\nAll test cases passed!")
