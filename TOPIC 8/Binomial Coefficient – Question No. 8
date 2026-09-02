@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+int factorial(int n)
+{
+    int fact = 1;
+
+    for (int i = 1; i <= n; i++)
+    {
+        fact = fact * i;
+    }
+
+    return fact;
+}
+
+int main()
+{
+    int n = 12;
+    int r = 4;
+
+    int committees = factorial(n) /
+                     (factorial(r) * factorial(n - r));
+
+    printf("Total Professors = %d\n", n);
+    printf("Committee Size = %d\n", r);
+    printf("Number of Committees = %d\n", committees);
+
+    return 0;
+}
