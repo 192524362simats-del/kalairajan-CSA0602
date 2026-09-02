@@ -1,0 +1,180 @@
+def schoolbook_multiply(x, y):
+    """
+    Naive schoolbook multiplication using digit manipulation.
+    Returns the result as a string.
+    """
+
+    if x == "0" or y == "0":
+        return "0"
+
+    x = x.lstrip("0")
+    y = y.lstrip("0")
+
+    n = len(x)
+    m = len(y)
+
+    result = [0] * (n + m)
+
+    # Multiply every digit of x with every digit of y
+    for i in range(n - 1, -1, -1):
+        for j in range(m - 1, -1, -1):
+            product = int(x[i]) * int(y[j])
+
+            pos1 = i + j + 1
+            pos2 = i + j
+
+            result[pos1] += product
+            result[pos2] += result[pos1] // 10
+            result[pos1] %= 10
+
+    # Remove leading zeros
+    start = 0
+    while start < len(result) - 1 and result[start] == 0:
+        start += 1
+
+    return ''.join(map(str, result[start:]))
+
+
+def add_strings(a, b):
+    """Adds two positive integer strings."""
+    i = len(a) - 1
+    j = len(b) - 1
+    carry = 0
+    result = []
+
+    while i >= 0 or j >= 0 or carry:
+        da = int(a[i]) if i >= 0 else 0
+        db = int(b[j]) if j >= 0 else 0
+
+        total = da + db + carry
+        result.append(str(total % 10))
+        carry = total // 10
+
+        i -= 1
+        j -= 1
+
+    return ''.join(reversed(result))
+
+
+def subtract_strings(a, b):
+    """
+    Subtracts b from a, assuming a >= b.
+    """
+    i = len(a) - 1
+    j = len(b) - 1
+    borrow = 0
+    result = []
+
+    while i >= 0:
+        da = int(a[i]) - borrow
+        db = int(b[j]) if j >= 0 else 0
+
+        if da < db:
+            da += 10
+            borrow = 1
+        else:
+            borrow = 0
+
+        result.append(str(da - db))
+
+        i -= 1
+        j -= 1
+
+    result = ''.join(reversed(result)).lstrip('0')
+
+    return result if result else "0"
+
+
+def shift_left_decimal(number, zeros):
+    """Multiplies a decimal string by 10^zeros."""
+    if number == "0":
+        return "0"
+    return number + "0" * zeros
+
+
+def karatsuba(x, y):
+    """
+    Karatsuba multiplication using decimal strings.
+    """
+
+    x = x.lstrip("0") or "0"
+    y = y.lstrip("0") or "0"
+
+    if x == "0" or y == "0":
+        return "0"
+
+    # Base case
+    if len(x) == 1 and len(y) == 1:
+        return str(int(x) * int(y))
+
+    # Make both numbers equal in length
+    n = max(len(x), len(y))
+
+    if n % 2 != 0:
+        n += 1
+
+    x = x.zfill(n)
+    y = y.zfill(n)
+
+    half = n // 2
+
+    # Split x = a*10^half + b
+    # Split y = c*10^half + d
+    a = x[:-half]
+    b = x[-half:]
+
+    c = y[:-half]
+    d = y[-half:]
+
+    # Three recursive multiplications
+    z2 = karatsuba(a, c)
+    z0 = karatsuba(b, d)
+
+    a_plus_b = add_strings(a, b)
+    c_plus_d = add_strings(c, d)
+
+    z1 = karatsuba(a_plus_b, c_plus_d)
+
+    # z1 = ac + ad + bc
+    z1 = subtract_strings(z1, z2)
+    z1 = subtract_strings(z1, z0)
+
+    # Result = z2*10^(2m) + z1*10^m + z0
+    result = add_strings(
+        add_strings(
+            shift_left_decimal(z2, 2 * half),
+            shift_left_decimal(z1, half)
+        ),
+        z0
+    )
+
+    return result
+
+
+# ---------------------------------------------------------
+# Test Cases
+# ---------------------------------------------------------
+
+print("ARBITRARY-PRECISION MULTIPLICATION")
+print("-----------------------------------")
+
+for digits in [2, 4, 8, 16, 32]:
+
+    x = '7' * digits
+    y = '3' * digits
+
+    schoolbook_result = schoolbook_multiply(x, y)
+    karatsuba_result = karatsuba(x, y)
+
+    # Verify both algorithms
+    assert schoolbook_result == str(int(x) * int(y))
+    assert karatsuba_result == str(int(x) * int(y))
+
+    print(f"\nDigits: {digits}")
+    print(f"x = {x}")
+    print(f"y = {y}")
+    print(f"Schoolbook Result : {schoolbook_result}")
+    print(f"Karatsuba Result  : {karatsuba_result}")
+    print("Result Verified   : Yes")
+
+print("\nAll test cases passed!")
