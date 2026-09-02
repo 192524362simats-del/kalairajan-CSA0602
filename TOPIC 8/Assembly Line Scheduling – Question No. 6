@@ -1,0 +1,45 @@
+#include <stdio.h>
+
+int min(int a, int b)
+{
+    return (a < b) ? a : b;
+}
+
+int main()
+{
+    int entry[2] = {10, 12};
+    int exit[2] = {18, 7};
+
+    int line1[4] = {4, 5, 3, 2};
+    int line2[4] = {2, 10, 1, 4};
+
+    int transfer1[3] = {7, 4, 5};
+    int transfer2[3] = {9, 2, 8};
+
+    int time1, time2;
+
+    // Time at the first station
+    time1 = entry[0] + line1[0];
+    time2 = entry[1] + line2[0];
+
+    // Calculate minimum time for remaining stations
+    for (int i = 1; i < 4; i++)
+    {
+        int newTime1 = min(time1 + line1[i],
+                           time2 + transfer2[i - 1] + line1[i]);
+
+        int newTime2 = min(time2 + line2[i],
+                           time1 + transfer1[i - 1] + line2[i]);
+
+        time1 = newTime1;
+        time2 = newTime2;
+    }
+
+    // Add exit times
+    int minimumTime = min(time1 + exit[0],
+                          time2 + exit[1]);
+
+    printf("Minimum Production Time = %d\n", minimumTime);
+
+    return 0;
+}
