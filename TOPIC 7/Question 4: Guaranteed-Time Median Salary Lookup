@@ -1,0 +1,79 @@
+def median_of_medians_select(arr, k):
+    """
+    Returns the k-th smallest element using
+    the Median-of-Medians selection algorithm.
+    k is zero-based.
+    """
+
+    if not 0 <= k < len(arr):
+        raise IndexError("k is out of range")
+
+    # Small array: sort directly
+    if len(arr) <= 5:
+        return sorted(arr)[k]
+
+    # Step 1: Divide into groups of 5
+    groups = [
+        arr[i:i + 5]
+        for i in range(0, len(arr), 5)
+    ]
+
+    # Step 2: Find median of every group
+    medians = [
+        sorted(group)[len(group) // 2]
+        for group in groups
+    ]
+
+    # Step 3: Find median of medians
+    pivot = median_of_medians_select(
+        medians,
+        len(medians) // 2
+    )
+
+    # Step 4: Partition around the pivot
+    low = [x for x in arr if x < pivot]
+    equal = [x for x in arr if x == pivot]
+    high = [x for x in arr if x > pivot]
+
+    # Step 5: Select from the correct partition
+    if k < len(low):
+        return median_of_medians_select(low, k)
+
+    elif k < len(low) + len(equal):
+        return pivot
+
+    else:
+        new_k = k - len(low) - len(equal)
+        return median_of_medians_select(high, new_k)
+
+
+# --------------------------------------------------
+# Test Case 1
+# --------------------------------------------------
+
+data = [12, 3, 5, 7, 4, 19, 26]
+
+for k in range(len(data)):
+    assert median_of_medians_select(data, k) == sorted(data)[k]
+
+
+# --------------------------------------------------
+# Test Case 2
+# --------------------------------------------------
+
+import random
+
+random.seed(1)
+
+big_data = [
+    random.randint(0, 10000)
+    for _ in range(500)
+]
+
+sorted_big = sorted(big_data)
+
+for k in [0, 10, 250, 499]:
+    assert median_of_medians_select(big_data, k) == sorted_big[k]
+
+
+print("All test cases passed!")
