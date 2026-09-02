@@ -1,0 +1,54 @@
+def palindrome_score(s):
+    n = len(s)
+
+    if n == 0:
+        return 0
+
+    # Two rolling rows
+    prev = [0] * n
+    curr = [0] * n
+
+    # Substrings of length 1 have LPS length 1
+    for i in range(n):
+        prev[i] = 1
+
+    # Process substrings from shorter to longer
+    for length in range(2, n + 1):
+        for i in range(n - length + 1):
+            j = i + length - 1
+
+            if s[i] == s[j]:
+                if length == 2:
+                    curr[i] = 2
+                else:
+                    curr[i] = prev[i + 1] + 2
+            else:
+                curr[i] = max(prev[i], curr[i + 1])
+
+        prev, curr = curr, [0] * n
+
+    return prev[0]
+
+
+# Test Cases
+assert palindrome_score("bbbab") > palindrome_score("cbbd")
+assert palindrome_score("a") == 1
+
+print("All test cases passed!")
+
+# Rank two submitted words
+word1 = "bbbab"
+word2 = "cbbd"
+
+score1 = palindrome_score(word1)
+score2 = palindrome_score(word2)
+
+print(f"{word1} Score = {score1}")
+print(f"{word2} Score = {score2}")
+
+if score1 > score2:
+    print(f"{word1} ranks higher!")
+elif score2 > score1:
+    print(f"{word2} ranks higher!")
+else:
+    print("Both words have the same score!")
