@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <math.h>
+
+struct Point {
+    int x;
+    int y;
+};
+
+int main() {
+    struct Point points[] = {
+        {2, 3},
+        {5, 4},
+        {1, 7},
+        {8, 9},
+        {4, 6}
+    };
+
+    int n = sizeof(points) / sizeof(points[0]);
+
+    double minDistance = INFINITY;
+    int p1 = 0, p2 = 1;
+
+    // Exhaustive comparison of all pairs
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+
+            double dx = points[i].x - points[j].x;
+            double dy = points[i].y - points[j].y;
+
+            double distance = sqrt(dx * dx + dy * dy);
+
+            if (distance < minDistance) {
+                minDistance = distance;
+                p1 = i;
+                p2 = j;
+            }
+        }
+    }
+
+    printf("Closest pair: (%d, %d) - (%d, %d)\n",
+           points[p1].x, points[p1].y,
+           points[p2].x, points[p2].y);
+
+    printf("Minimum distance: %.15f\n", minDistance);
+
+    return 0;
+}
