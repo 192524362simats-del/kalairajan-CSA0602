@@ -1,0 +1,85 @@
+#include <stdio.h>
+
+long long comparisons = 0;
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int partition(int a[], int low, int high) {
+    int pivot = a[high];
+    int i = low - 1;
+
+    for (int j = low; j < high; j++) {
+        comparisons++;
+
+        if (a[j] <= pivot) {
+            i++;
+            swap(&a[i], &a[j]);
+        }
+    }
+
+    swap(&a[i + 1], &a[high]);
+
+    return i + 1;
+}
+
+void quickSort(int a[], int low, int high) {
+    if (low < high) {
+        int pivot = partition(a, low, high);
+
+        quickSort(a, low, pivot - 1);
+        quickSort(a, pivot + 1, high);
+    }
+}
+
+void displayArray(int a[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d", a[i]);
+
+        if (i < n - 1)
+            printf(",");
+    }
+    printf("\n");
+}
+
+int main() {
+    int n;
+
+    printf("Enter N: ");
+    scanf("%d", &n);
+
+    int best[n], worst[n];
+
+    printf("Enter sorted array for Best Case:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &best[i]);
+    }
+
+    printf("Enter reverse sorted array for Worst Case:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &worst[i]);
+    }
+
+    /* Best Case */
+    comparisons = 0;
+    quickSort(best, 0, n - 1);
+
+    printf("\nBest Case\n");
+    printf("Sorted Array : ");
+    displayArray(best, n);
+    printf("Comparisons : %lld\n", comparisons);
+
+    /* Worst Case */
+    comparisons = 0;
+    quickSort(worst, 0, n - 1);
+
+    printf("\nWorst Case\n");
+    printf("Sorted Array : ");
+    displayArray(worst, n);
+    printf("Comparisons : %lld\n", comparisons);
+
+    return 0;
+}
