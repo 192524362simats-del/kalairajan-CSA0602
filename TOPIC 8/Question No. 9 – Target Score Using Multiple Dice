@@ -1,0 +1,35 @@
+#include <stdio.h>
+
+int countWays(int dice, int faces, int target) {
+    // Base case
+    if (dice == 0)
+        return (target == 0) ? 1 : 0;
+
+    // Invalid target
+    if (target < 0)
+        return 0;
+
+    int ways = 0;
+
+    // Try every possible face value
+    for (int i = 1; i <= faces; i++) {
+        ways += countWays(dice - 1, faces, target - i);
+    }
+
+    return ways;
+}
+
+int main() {
+    int dice = 3;
+    int faces = 6;
+    int target = 8;
+
+    int result = countWays(dice, faces, target);
+
+    printf("Number of Dice = %d\n", dice);
+    printf("Faces per Dice = %d\n", faces);
+    printf("Target Sum = %d\n", target);
+    printf("Number of ways = %d\n", result);
+
+    return 0;
+}
