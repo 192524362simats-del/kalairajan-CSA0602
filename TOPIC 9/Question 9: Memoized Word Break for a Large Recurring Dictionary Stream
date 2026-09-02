@@ -1,0 +1,82 @@
+class MemoizedWordBreak:
+    def __init__(self, text, dictionary):
+        self.text = text.lower()
+        self.word_set = set(dictionary)
+        self.n = len(text)
+
+        # Cache: starting index -> segmentation feasibility
+        self.cache = {}
+
+    def can_segment_from(self, start):
+        # Return cached result if already calculated
+        if start in self.cache:
+            return self.cache[start]
+
+        # Empty suffix is segmentable
+        if start == self.n:
+            return True
+
+        # Try every possible dictionary word
+        for end in range(start + 1, self.n + 1):
+            if self.text[start:end] in self.word_set:
+                if self.can_segment_from(end):
+                    self.cache[start] = True
+                    return True
+
+        # No valid segmentation found
+        self.cache[start] = False
+        return False
+
+    def can_segment(self):
+        return self.can_segment_from(0)
+
+
+# Standard function for the required test cases
+def can_segment(s, dictionary):
+    word_set = set(dictionary)
+    n = len(s)
+
+    # Memoization: start index -> result
+    memo = {}
+
+    def solve(start):
+        if start == n:
+            return True
+
+        if start in memo:
+            return memo[start]
+
+        for end in range(start + 1, n + 1):
+            if s[start:end] in word_set and solve(end):
+                memo[start] = True
+                return True
+
+        memo[start] = False
+        return False
+
+    return solve(0)
+
+
+# Test Cases
+assert can_segment("leetcode", ["leet", "code"]) == True
+assert can_segment("leetcode", ["leet", "code"]) == True  # served from cache
+
+print("All test cases passed!")
+
+
+# Demonstration of persistent caching
+text = "leetcode"
+dictionary = ["leet", "code"]
+
+stream = MemoizedWordBreak(text, dictionary)
+
+print("\nFirst query:")
+print(stream.can_segment())
+
+print("\nCache after first query:")
+print(stream.cache)
+
+print("\nSecond query:")
+print(stream.can_segment())
+
+print("\nCache reused:", stream.cache)
