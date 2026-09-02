@@ -1,0 +1,181 @@
+def add_polynomials(p, q):
+    """Add two polynomials represented as coefficient lists."""
+
+    n = max(len(p), len(q))
+    result = [0] * n
+
+    for i in range(n):
+        if i < len(p):
+            result[i] += p[i]
+
+        if i < len(q):
+            result[i] += q[i]
+
+    return result
+
+
+def subtract_polynomials(p, q):
+    """Subtract q from p."""
+
+    n = max(len(p), len(q))
+    result = [0] * n
+
+    for i in range(n):
+        if i < len(p):
+            result[i] += p[i]
+
+        if i < len(q):
+            result[i] -= q[i]
+
+    # Remove unnecessary trailing zeros
+    while len(result) > 1 and result[-1] == 0:
+        result.pop()
+
+    return result
+
+
+def shift_polynomial(p, positions):
+    """Multiply polynomial by x^positions."""
+
+    if p == [0]:
+        return [0]
+
+    return [0] * positions + p
+
+
+# ---------------------------------------------------------
+# Naive Polynomial Multiplication
+# ---------------------------------------------------------
+
+def multiply_polynomials_naive(p, q):
+    """
+    Naive O(n^2) polynomial multiplication.
+    """
+
+    if p == [0] or q == [0]:
+        return [0]
+
+    result = [0] * (len(p) + len(q) - 1)
+
+    for i in range(len(p)):
+        for j in range(len(q)):
+            result[i + j] += p[i] * q[j]
+
+    return result
+
+
+# ---------------------------------------------------------
+# Karatsuba-Style Polynomial Multiplication
+# ---------------------------------------------------------
+
+def karatsuba_poly(p, q):
+    """
+    Karatsuba-style polynomial multiplication.
+    """
+
+    # Remove trailing zeros
+    while len(p) > 1 and p[-1] == 0:
+        p = p[:-1]
+
+    while len(q) > 1 and q[-1] == 0:
+        q = q[:-1]
+
+    # Zero polynomial
+    if p == [0] or q == [0]:
+        return [0]
+
+    # Base case: multiply constants
+    if len(p) == 1 and len(q) == 1:
+        return [p[0] * q[0]]
+
+    # Equalize lengths
+    n = max(len(p), len(q))
+
+    if n == 1:
+        return [p[0] * q[0]]
+
+    # Split approximately in half
+    m = n // 2
+
+    p_low = p[:m]
+    p_high = p[m:]
+
+    q_low = q[:m]
+    q_high = q[m:]
+
+    # Ensure non-empty parts
+    if not p_low:
+        p_low = [0]
+
+    if not q_low:
+        q_low = [0]
+
+    if not p_high:
+        p_high = [0]
+
+    if not q_high:
+        q_high = [0]
+
+    # Three recursive multiplications
+    z0 = karatsuba_poly(p_low, q_low)
+
+    z2 = karatsuba_poly(p_high, q_high)
+
+    p_sum = add_polynomials(p_low, p_high)
+    q_sum = add_polynomials(q_low, q_high)
+
+    z1 = karatsuba_poly(p_sum, q_sum)
+
+    # z1 = p_low*q_high + p_high*q_low
+    z1 = subtract_polynomials(z1, z0)
+    z1 = subtract_polynomials(z1, z2)
+
+    # Shift according to polynomial degree
+    z1_shifted = shift_polynomial(z1, m)
+    z2_shifted = shift_polynomial(z2, 2 * m)
+
+    # Combine all three parts
+    result = add_polynomials(z0, z1_shifted)
+    result = add_polynomials(result, z2_shifted)
+
+    return result
+
+
+# ---------------------------------------------------------
+# Test Case 1
+# ---------------------------------------------------------
+
+result1 = multiply_polynomials_naive([1, 2], [3, 4])
+
+assert result1 == [3, 10, 8]
+
+print("Test Case 1")
+print("------------")
+print("P1 =", [1, 2])
+print("P2 =", [3, 4])
+print("Naive Result     =", result1)
+print("Expected Result  =", [3, 10, 8])
+
+
+# ---------------------------------------------------------
+# Test Case 2
+# ---------------------------------------------------------
+
+p1 = [1, 2, 3, 4]
+p2 = [5, 6, 7, 8]
+
+naive_result = multiply_polynomials_naive(p1, p2)
+karatsuba_result = karatsuba_poly(p1, p2)
+
+# Compare the complete results
+assert karatsuba_result == naive_result
+
+print("\nTest Case 2")
+print("------------")
+print("P1 =", p1)
+print("P2 =", p2)
+
+print("Naive Result     =", naive_result)
+print("Karatsuba Result =", karatsuba_result)
+
+print("\nAll test cases passed!")
