@@ -1,0 +1,75 @@
+#include <stdio.h>
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+/* Partition using the last element as pivot */
+int partition(int a[], int low, int high) {
+    int pivot = a[high];
+    int i = low - 1;
+
+    for (int j = low; j < high; j++) {
+        if (a[j] <= pivot) {
+            i++;
+            swap(&a[i], &a[j]);
+        }
+    }
+
+    swap(&a[i + 1], &a[high]);
+
+    return i + 1;
+}
+
+/* Find k-th smallest element */
+int kthSmallest(int a[], int low, int high, int k) {
+    if (low <= high) {
+        int pivotIndex = partition(a, low, high);
+
+        /* Position of pivot relative to current subarray */
+        int position = pivotIndex - low + 1;
+
+        if (position == k)
+            return a[pivotIndex];
+
+        /* Search only left part */
+        if (k < position)
+            return kthSmallest(a, low, pivotIndex - 1, k);
+
+        /* Search only right part */
+        return kthSmallest(a, pivotIndex + 1, high,
+                           k - position);
+    }
+
+    return -1;
+}
+
+int main() {
+    int n, k;
+
+    printf("Enter N: ");
+    scanf("%d", &n);
+
+    int a[n];
+
+    printf("Enter array elements:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &a[i]);
+    }
+
+    printf("Enter K: ");
+    scanf("%d", &k);
+
+    if (k < 1 || k > n) {
+        printf("Invalid value of K.\n");
+        return 0;
+    }
+
+    int result = kthSmallest(a, 0, n - 1, k);
+
+    printf("\nK-th Smallest Element = %d\n", result);
+
+    return 0;
+}
