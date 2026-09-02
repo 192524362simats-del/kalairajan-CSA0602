@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <limits.h>
+
+#define N 3
+
+// Function to calculate total cost
+int total_cost(int assignment[], int cost_matrix[N][N]) {
+    int total = 0;
+
+    for (int worker = 0; worker < N; worker++) {
+        total += cost_matrix[worker][assignment[worker]];
+    }
+
+    return total;
+}
+
+// Function to swap two elements
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// Generate all possible assignments
+void generate_permutations(
+    int assignment[],
+    int start,
+    int cost_matrix[N][N],
+    int *min_cost,
+    int best_assignment[]
+) {
+    if (start == N) {
+
+        int current_cost = total_cost(assignment, cost_matrix);
+
+        if (current_cost < *min_cost) {
+            *min_cost = current_cost;
+
+            for (int i = 0; i < N; i++) {
+                best_assignment[i] = assignment[i];
+            }
+        }
+
+        return;
+    }
+
+    for (int i = start; i < N; i++) {
+
+        swap(&assignment[start], &assignment[i]);
+
+        generate_permutations(
+            assignment,
+            start + 1,
+            cost_matrix,
+            min_cost,
+            best_assignment
+        );
+
+        swap(&assignment[start], &assignment[i]);
+    }
+}
+
+// Assignment problem using exhaustive search
+void assignment_problem(int cost_matrix[N][N]) {
+
+    int assignment[N] = {0, 1, 2};
+    int best_assignment[N];
+
+    int min_cost = INT_MAX;
+
+    generate_permutations(
+        assignment,
+        0,
+        cost_matrix,
+        &min_cost,
+        best_assignment
+    );
+
+    printf("Optimal Assignment: ");
+
+    for (int i = 0; i < N; i++) {
+        printf("(worker %d, task %d)",
+               i + 1,
+               best_assignment[i] + 1);
+
+        if (i != N - 1)
+            printf(", ");
+    }
+
+    printf("\nTotal Cost: %d\n", min_cost);
+}
+
+int main() {
+
+    // Test Case 1
+    int cost1[N][N] = {
+        {3, 10, 7},
+        {8, 5, 12},
+        {4, 6, 9}
+    };
+
+    printf("Test Case 1:\n");
+    assignment_problem(cost1);
+
+    printf("\n");
+
+    // Test Case 2
+    int cost2[N][N] = {
+        {15, 9, 4},
+        {8, 7, 18},
+        {6, 12, 11}
+    };
+
+    printf("Test Case 2:\n");
+    assignment_problem(cost2);
+
+    return 0;
+}
