@@ -1,0 +1,43 @@
+def lps_length_optimized(s):
+    n = len(s)
+
+    # Empty string
+    if n == 0:
+        return 0
+
+    # Previous and current rows
+    prev = [0] * n
+    curr = [0] * n
+
+    # A single character is always a palindrome
+    for i in range(n):
+        prev[i] = 1
+
+    # Process substrings by increasing length
+    for length in range(2, n + 1):
+
+        for i in range(n - length + 1):
+            j = i + length - 1
+
+            # If first and last characters match
+            if s[i] == s[j]:
+                if length == 2:
+                    curr[i] = 2
+                else:
+                    curr[i] = prev[i + 1] + 2
+
+            # Otherwise, discard either end
+            else:
+                curr[i] = max(prev[i], curr[i + 1])
+
+        # Move current row to previous row
+        prev, curr = curr, [0] * n
+
+    return prev[0]
+
+
+# Test Cases
+assert lps_length_optimized("bbbab") == 4
+assert lps_length_optimized("cbbd") == 2
+
+print("All test cases passed!")
