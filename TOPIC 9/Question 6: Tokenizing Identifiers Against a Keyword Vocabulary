@@ -1,0 +1,85 @@
+def can_segment(s, vocabulary):
+    s = s.lower()
+    word_set = set(vocabulary)
+    n = len(s)
+
+    # dp[i] = True if s[0:i] can be segmented
+    dp = [False] * (n + 1)
+    dp[0] = True
+
+    for i in range(1, n + 1):
+        for j in range(i):
+            if dp[j] and s[j:i] in word_set:
+                dp[i] = True
+                break
+
+    return dp[n]
+
+
+def suggest_spacing(s, vocabulary):
+    s = s.lower()
+    word_set = set(vocabulary)
+    n = len(s)
+
+    # DP array
+    dp = [False] * (n + 1)
+
+    # Parent array stores the previous split position
+    parent = [-1] * (n + 1)
+
+    dp[0] = True
+
+    # Fill DP table
+    for i in range(1, n + 1):
+        for j in range(i):
+            if dp[j] and s[j:i] in word_set:
+                dp[i] = True
+                parent[i] = j
+                break
+
+    # No valid segmentation
+    if not dp[n]:
+        return None
+
+    # Reconstruct segmentation
+    words = []
+    position = n
+
+    while position > 0:
+        start = parent[position]
+        words.append(s[start:position])
+        position = start
+
+    words.reverse()
+
+    return " ".join(words)
+
+
+# Test Cases
+assert can_segment("leetcode", ["leet", "code"]) == True
+assert suggest_spacing("leetcode", ["leet", "code"]) == "leet code"
+
+print("All test cases passed!")
+
+
+# Example: Programming identifier
+vocabulary = [
+    "get",
+    "user",
+    "data",
+    "set",
+    "value",
+    "read",
+    "write",
+    "file",
+    "string",
+    "code"
+]
+
+identifier = "getuserdata"
+
+if can_segment(identifier, vocabulary):
+    print("Identifier:", identifier)
+    print("Valid vocabulary segmentation:", suggest_spacing(identifier, vocabulary))
+else:
+    print("Identifier cannot be segmented.")
