@@ -1,0 +1,53 @@
+#include <stdio.h>
+
+void subsetSum(int arr[], int n, int target) {
+    int found = 0;
+
+    // Generate all possible subsets
+    for (int mask = 0; mask < (1 << n); mask++) {
+        int sum = 0;
+
+        // Calculate sum of the current subset
+        for (int i = 0; i < n; i++) {
+            if (mask & (1 << i)) {
+                sum += arr[i];
+            }
+        }
+
+        // Check if subset sum equals target
+        if (sum == target) {
+            printf("Subset found: [");
+
+            int first = 1;
+            for (int i = 0; i < n; i++) {
+                if (mask & (1 << i)) {
+                    if (!first)
+                        printf(", ");
+
+                    printf("%d", arr[i]);
+                    first = 0;
+                }
+            }
+
+            printf("]\n");
+            printf("Sum: %d\n", sum);
+
+            found = 1;
+            break;
+        }
+    }
+
+    if (!found) {
+        printf("No subset found with sum %d\n", target);
+    }
+}
+
+int main() {
+    int arr[] = {15, 10, 12, 7, 5};
+    int n = 5;
+    int target = 22;
+
+    subsetSum(arr, n, target);
+
+    return 0;
+}
