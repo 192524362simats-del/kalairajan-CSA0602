@@ -1,0 +1,140 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* ---------------- Merge Sort ---------------- */
+
+void merge(int a[], int low, int mid, int high) {
+    int n = high - low + 1;
+    int *temp = (int *)malloc(n * sizeof(int));
+
+    int i = low;
+    int j = mid + 1;
+    int k = 0;
+
+    while (i <= mid && j <= high) {
+        if (a[i] <= a[j])
+            temp[k++] = a[i++];
+        else
+            temp[k++] = a[j++];
+    }
+
+    while (i <= mid)
+        temp[k++] = a[i++];
+
+    while (j <= high)
+        temp[k++] = a[j++];
+
+    for (i = low, k = 0; i <= high; i++, k++)
+        a[i] = temp[k];
+
+    free(temp);
+}
+
+void mergeSort(int a[], int low, int high) {
+    if (low < high) {
+        int mid = (low + high) / 2;
+
+        mergeSort(a, low, mid);
+        mergeSort(a, mid + 1, high);
+
+        merge(a, low, mid, high);
+    }
+}
+
+/* ---------------- Quick Sort ---------------- */
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int partition(int a[], int low, int high) {
+    int pivot = a[high];
+    int i = low - 1;
+
+    for (int j = low; j < high; j++) {
+        if (a[j] <= pivot) {
+            i++;
+            swap(&a[i], &a[j]);
+        }
+    }
+
+    swap(&a[i + 1], &a[high]);
+
+    return i + 1;
+}
+
+void quickSort(int a[], int low, int high) {
+    if (low < high) {
+        int pivotIndex = partition(a, low, high);
+
+        quickSort(a, low, pivotIndex - 1);
+        quickSort(a, pivotIndex + 1, high);
+    }
+}
+
+/* ---------------- Display ---------------- */
+
+void display(int a[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d", a[i]);
+
+        if (i < n - 1)
+            printf(",");
+    }
+    printf("\n");
+}
+
+int main() {
+    int n;
+
+    printf("Enter N: ");
+    scanf("%d", &n);
+
+    int a[n], mergeArray[n], quickArray[n];
+
+    printf("Enter array elements:\n");
+
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &a[i]);
+
+        /* Same input for both algorithms */
+        mergeArray[i] = a[i];
+        quickArray[i] = a[i];
+    }
+
+    /* Execute Merge Sort */
+    mergeSort(mergeArray, 0, n - 1);
+
+    /* Execute Quick Sort */
+    quickSort(quickArray, 0, n - 1);
+
+    printf("\nSorted : ");
+    display(mergeArray, n);
+
+    /*
+     * Approximate auxiliary space:
+     * Merge Sort: temporary array of n integers
+     * Quick Sort: recursion stack
+     */
+    size_t mergeSpace = n * sizeof(int);
+
+    /*
+     * Approximate Quick Sort recursion stack.
+     * Each recursive level is estimated using a stack frame.
+     */
+    size_t quickSpace = (n / 2) * sizeof(int) * 2;
+
+    printf("Merge Space : ~%zu bytes\n", mergeSpace);
+    printf("Quick Space : ~%zu bytes\n", quickSpace);
+
+    if (mergeSpace < quickSpace)
+        printf("Analysis : Merge Sort is more space-efficient.\n");
+    else if (quickSpace < mergeSpace)
+        printf("Analysis : Quick Sort is more space-efficient.\n");
+    else
+        printf("Analysis : Both use approximately equal auxiliary space.\n");
+
+    return 0;
+}
