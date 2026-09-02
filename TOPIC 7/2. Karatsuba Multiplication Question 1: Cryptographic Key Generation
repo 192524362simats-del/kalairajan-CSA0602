@@ -1,0 +1,95 @@
+# Karatsuba Multiplication
+
+def karatsuba(x, y):
+    # Base cases
+    if x == 0 or y == 0:
+        return 0
+
+    if x < 10 or y < 10:
+        return x * y
+
+    # Number of digits
+    n = max(len(str(x)), len(str(y)))
+
+    # Split position
+    m = n // 2
+
+    # Positional value
+    power = 10 ** m
+
+    # Split x and y into high and low parts
+    high1 = x // power
+    low1 = x % power
+
+    high2 = y // power
+    low2 = y % power
+
+    # Three recursive multiplications
+    z2 = karatsuba(high1, high2)
+    z0 = karatsuba(low1, low2)
+
+    z1 = karatsuba(high1 + low1, high2 + low2)
+    z1 = z1 - z2 - z0
+
+    # Combine the results
+    return z2 * (10 ** (2 * m)) + \
+           z1 * (10 ** m) + \
+           z0
+
+
+# --------------------------------------------------
+# Test Case 1
+# --------------------------------------------------
+
+assert karatsuba(1234, 5678) == 1234 * 5678
+
+print("Test Case 1 Passed")
+print("1234 × 5678 =", karatsuba(1234, 5678))
+
+
+# --------------------------------------------------
+# Test Case 2
+# --------------------------------------------------
+
+assert karatsuba(123456789, 987654321) == \
+       123456789 * 987654321
+
+print("\nTest Case 2 Passed")
+print("123456789 × 987654321 =",
+      karatsuba(123456789, 987654321))
+
+
+# --------------------------------------------------
+# Test Case 3: Base Case
+# --------------------------------------------------
+
+assert karatsuba(9, 9) == 81
+
+print("\nTest Case 3 Passed")
+print("9 × 9 =", karatsuba(9, 9))
+
+
+# --------------------------------------------------
+# Test Case 4: Zero Operand
+# --------------------------------------------------
+
+assert karatsuba(0, 12345) == 0
+
+print("\nTest Case 4 Passed")
+print("0 × 12345 =", karatsuba(0, 12345))
+
+
+# --------------------------------------------------
+# Test Case 5: 50-Digit Numbers
+# --------------------------------------------------
+
+big1 = int('9' * 50)
+big2 = int('8' * 50)
+
+assert karatsuba(big1, big2) == big1 * big2
+
+print("\nTest Case 5 Passed")
+print("50-digit multiplication verified successfully.")
+
+
+print("\nAll test cases passed!")
