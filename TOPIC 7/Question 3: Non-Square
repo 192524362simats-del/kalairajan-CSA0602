@@ -1,0 +1,308 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 128
+
+/* Add two matrices */
+void addMatrix(int n, int A[MAX][MAX], int B[MAX][MAX],
+               int C[MAX][MAX]) {
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            C[i][j] = A[i][j] + B[i][j];
+}
+
+/* Subtract two matrices */
+void subtractMatrix(int n, int A[MAX][MAX], int B[MAX][MAX],
+                    int C[MAX][MAX]) {
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            C[i][j] = A[i][j] - B[i][j];
+}
+
+/* Standard matrix multiplication for verification */
+void standardMultiply(int r1, int c1, int c2,
+                      int A[MAX][MAX], int B[MAX][MAX],
+                      int C[MAX][MAX]) {
+    for (int i = 0; i < r1; i++) {
+        for (int j = 0; j < c2; j++) {
+            C[i][j] = 0;
+
+            for (int k = 0; k < c1; k++)
+                C[i][j] += A[i][k] * B[k][j];
+        }
+    }
+}
+
+/* Recursive Strassen multiplication */
+void strassen(int n, int A[MAX][MAX], int B[MAX][MAX],
+              int C[MAX][MAX]) {
+
+    /* Base case */
+    if (n == 1) {
+        C[0][0] = A[0][0] * B[0][0];
+        return;
+    }
+
+    int k = n / 2;
+
+    int A11[MAX][MAX], A12[MAX][MAX];
+    int A21[MAX][MAX], A22[MAX][MAX];
+
+    int B11[MAX][MAX], B12[MAX][MAX];
+    int B21[MAX][MAX], B22[MAX][MAX];
+
+    int M1[MAX][MAX], M2[MAX][MAX], M3[MAX][MAX];
+    int M4[MAX][MAX], M5[MAX][MAX], M6[MAX][MAX], M7[MAX][MAX];
+
+    int T1[MAX][MAX], T2[MAX][MAX];
+
+    /* Divide matrices into four submatrices */
+    for (int i = 0; i < k; i++) {
+        for (int j = 0; j < k; j++) {
+
+            A11[i][j] = A[i][j];
+            A12[i][j] = A[i][j + k];
+            A21[i][j] = A[i + k][j];
+            A22[i][j] = A[i + k][j + k];
+
+            B11[i][j] = B[i][j];
+            B12[i][j] = B[i][j + k];
+            B21[i][j] = B[i + k][j];
+            B22[i][j] = B[i + k][j + k];
+        }
+    }
+
+    /* M1 = (A11 + A22)(B11 + B22) */
+    addMatrix(k, A11, A22, T1);
+    addMatrix(k, B11, B22, T2);
+    strassen(k, T1, T2, M1);
+
+    /* M2 = (A21 + A22)B11 */
+    addMatrix(k, A21, A22, T1);
+    strassen(k, T1, B11, M2);
+
+    /* M3 = A11(B12 - B22) */
+    subtractMatrix(k, B12, B22, T1);
+    strassen(k, A11, T1, M3);
+
+    /* M4 = A22(B21 - B11) */
+    subtractMatrix(k, B21, B11, T1);
+    strassen(k, A22, T1, M4);
+
+    /* M5 = (A11 + A12)B22 */
+    addMatrix(k, A11, A12, T1);
+    strassen(k, T1, B22, M5);
+
+    /* M6 = (A21 - A11)(B11 + B12) */
+    subtractMatrix(k, A21, A11, T1);
+    addMatrix(k, B11, B12, T2);
+    strassen(k, T1, T2, M6);
+
+    /* M7 = (A12 - A22)(B21 + B22) */
+    subtractMatrix(k, A12, A22, T1);
+    addMatrix(k, B21, B22, T2);
+    strassen(k, T1, T2, M7);
+
+    /* Combine the seven products */
+
+    for (int i = 0; i < k; i++) {
+        for (int j = 0; j < k; j++) {
+
+            /* C11 = M1 + M4 - M5 + M7 */
+            C[i][j] =
+                M1[i][j] + M4[i][j]
+                - M5[i][j] + M7[i][j];
+
+            /* C12 = M3 + M5 */
+            C[i][j + k] =
+                M3[i][j] + M5[i][j];
+
+            /* C21 = M2 + M4 */
+            C[i + k][j] =
+                M2[i][j] + M4[i][j];
+
+            /* C22 = M1 - M2 + M3 + M6 */
+            C[i + k][j + k] =
+                M1[i][j] - M2[i][j]
+                + M3[i][j] + M6[i][j];
+        }
+    }
+}
+
+/* Find next power of two */
+int nextPowerOfTwo(int n) {
+    int size = 1;
+
+    while (size < n)
+        size *= 2;
+
+    return size;
+}
+
+/*
+   Strassen multiplication for arbitrary matrices.
+
+   A = rowsA x colsA
+   B = colsA x colsB
+   C = rowsA x colsB
+*/
+void strassenArbitrary(int rowsA, int colsA, int colsB,
+                       int A[MAX][MAX], int B[MAX][MAX],
+                       int C[MAX][MAX]) {
+
+    /*
+       Convert the rectangular matrices into square matrices.
+
+       Example:
+       A = 2 x 3
+       B = 3 x 2
+
+       Largest dimension = 3
+       Next power of two = 4
+
+       Both matrices are padded to 4 x 4.
+    */
+    int maxDimension = rowsA;
+
+    if (colsA > maxDimension)
+        maxDimension = colsA;
+
+    if (colsB > maxDimension)
+        maxDimension = colsB;
+
+    int size = nextPowerOfTwo(maxDimension);
+
+    int PA[MAX][MAX] = {0};
+    int PB[MAX][MAX] = {0};
+    int PC[MAX][MAX] = {0};
+
+    /* Copy A into padded matrix */
+    for (int i = 0; i < rowsA; i++) {
+        for (int j = 0; j < colsA; j++) {
+            PA[i][j] = A[i][j];
+        }
+    }
+
+    /* Copy B into padded matrix */
+    for (int i = 0; i < colsA; i++) {
+        for (int j = 0; j < colsB; j++) {
+            PB[i][j] = B[i][j];
+        }
+    }
+
+    /* Apply Strassen */
+    strassen(size, PA, PB, PC);
+
+    /* Trim padded result */
+    for (int i = 0; i < rowsA; i++) {
+        for (int j = 0; j < colsB; j++) {
+            C[i][j] = PC[i][j];
+        }
+    }
+}
+
+/* Print matrix */
+void printMatrix(int rows, int cols, int A[MAX][MAX]) {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            printf("%d ", A[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+/* Compare two matrices */
+int compareMatrices(int rows, int cols,
+                    int A[MAX][MAX], int B[MAX][MAX]) {
+
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+
+            if (A[i][j] != B[i][j])
+                return 0;
+        }
+    }
+
+    return 1;
+}
+
+int main() {
+
+    /* ---------------- TEST CASE 1 ---------------- */
+
+    int A5[MAX][MAX] = {
+        {0, 1, 2, 3, 4},
+        {1, 2, 3, 4, 5},
+        {2, 3, 4, 5, 6},
+        {3, 4, 5, 6, 7},
+        {4, 5, 6, 7, 8}
+    };
+
+    int B5[MAX][MAX] = {
+        {1, 0, 0, 0, 0},
+        {0, 1, 0, 0, 0},
+        {0, 0, 1, 0, 0},
+        {0, 0, 0, 1, 0},
+        {0, 0, 0, 0, 1}
+    };
+
+    int S5[MAX][MAX] = {0};
+    int N5[MAX][MAX] = {0};
+
+    strassenArbitrary(5, 5, 5, A5, B5, S5);
+    standardMultiply(5, 5, 5, A5, B5, N5);
+
+    printf("Test Case 1: 5 x 5 Identity Matrix\n");
+
+    printf("\nStrassen Result:\n");
+    printMatrix(5, 5, S5);
+
+    printf("\nStandard Result:\n");
+    printMatrix(5, 5, N5);
+
+    if (compareMatrices(5, 5, S5, N5))
+        printf("\nTest Case 1: Passed\n");
+    else
+        printf("\nTest Case 1: Failed\n");
+
+
+    /* ---------------- TEST CASE 2 ---------------- */
+
+    int ARect[MAX][MAX] = {
+        {1, 2, 3},
+        {4, 5, 6}
+    };
+
+    int BRect[MAX][MAX] = {
+        {7, 8},
+        {9, 10},
+        {11, 12}
+    };
+
+    int SRect[MAX][MAX] = {0};
+    int NRect[MAX][MAX] = {0};
+
+    strassenArbitrary(2, 3, 2,
+                      ARect, BRect, SRect);
+
+    standardMultiply(2, 3, 2,
+                     ARect, BRect, NRect);
+
+    printf("\n\nTest Case 2: 2 x 3 multiplied by 3 x 2\n");
+
+    printf("\nStrassen Result:\n");
+    printMatrix(2, 2, SRect);
+
+    printf("\nStandard Result:\n");
+    printMatrix(2, 2, NRect);
+
+    if (compareMatrices(2, 2, SRect, NRect))
+        printf("\nTest Case 2: Passed\n");
+    else
+        printf("\nTest Case 2: Failed\n");
+
+
+    printf("\nAll test cases passed!\n");
+
+    return 0;
+}
