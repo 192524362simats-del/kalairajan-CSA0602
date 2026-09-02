@@ -1,0 +1,49 @@
+def base_pair_estimate(fragment):
+    n = len(fragment)
+
+    # Empty fragment has no base pairs
+    if n == 0:
+        return 0
+
+    # Rolling rows for LPS calculation
+    prev = [0] * n
+    curr = [0] * n
+
+    # A single character has LPS length 1
+    for i in range(n):
+        prev[i] = 1
+
+    # Calculate LPS using rolling rows
+    for length in range(2, n + 1):
+        for i in range(n - length + 1):
+            j = i + length - 1
+
+            if fragment[i] == fragment[j]:
+                if length == 2:
+                    curr[i] = 2
+                else:
+                    curr[i] = prev[i + 1] + 2
+            else:
+                curr[i] = max(prev[i], curr[i + 1])
+
+        prev, curr = curr, [0] * n
+
+    # LPS length
+    lps = prev[0]
+
+    # Each pair contributes two characters
+    return lps // 2
+
+
+# Test Cases
+assert base_pair_estimate("bbbab") == 2
+assert base_pair_estimate("cbbd") == 1
+
+print("All test cases passed!")
+
+# Example calculations
+fragment1 = "bbbab"
+fragment2 = "cbbd"
+
+print(f"{fragment1} Base Pair Estimate = {base_pair_estimate(fragment1)}")
+print(f"{fragment2} Base Pair Estimate = {base_pair_estimate(fragment2)}")
