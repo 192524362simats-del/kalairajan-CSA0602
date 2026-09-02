@@ -1,0 +1,250 @@
+import random
+import time
+
+
+# Generate a random square matrix
+def random_matrix(n):
+    return [[random.randint(1, 10) for _ in range(n)] for _ in range(n)]
+
+
+# Standard triple-loop matrix multiplication
+def standard_multiply(A, B):
+    n = len(A)
+    C = [[0] * n for _ in range(n)]
+
+    for i in range(n):
+        for j in range(n):
+            for k in range(n):
+                C[i][j] += A[i][k] * B[k][j]
+
+    return C
+
+
+# Matrix addition
+def add_matrix(A, B):
+    n = len(A)
+
+    return [
+        [A[i][j] + B[i][j] for j in range(n)]
+        for i in range(n)
+    ]
+
+
+# Matrix subtraction
+def subtract_matrix(A, B):
+    n = len(A)
+
+    return [
+        [A[i][j] - B[i][j] for j in range(n)]
+        for i in range(n)
+    ]
+
+
+# Recursive Strassen multiplication
+def strassen_recursive(A, B):
+
+    n = len(A)
+
+    # Base case
+    if n == 1:
+        return [[A[0][0] * B[0][0]]]
+
+    mid = n // 2
+
+    # Divide A
+    A11 = [row[:mid] for row in A[:mid]]
+    A12 = [row[mid:] for row in A[:mid]]
+    A21 = [row[:mid] for row in A[mid:]]
+    A22 = [row[mid:] for row in A[mid:]]
+
+    # Divide B
+    B11 = [row[:mid] for row in B[:mid]]
+    B12 = [row[mid:] for row in B[:mid]]
+    B21 = [row[:mid] for row in B[mid:]]
+    B22 = [row[mid:] for row in B[mid:]]
+
+    # Seven Strassen products
+
+    M1 = strassen_recursive(
+        add_matrix(A11, A22),
+        add_matrix(B11, B22)
+    )
+
+    M2 = strassen_recursive(
+        add_matrix(A21, A22),
+        B11
+    )
+
+    M3 = strassen_recursive(
+        A11,
+        subtract_matrix(B12, B22)
+    )
+
+    M4 = strassen_recursive(
+        A22,
+        subtract_matrix(B21, B11)
+    )
+
+    M5 = strassen_recursive(
+        add_matrix(A11, A12),
+        B22
+    )
+
+    M6 = strassen_recursive(
+        subtract_matrix(A21, A11),
+        add_matrix(B11, B12)
+    )
+
+    M7 = strassen_recursive(
+        subtract_matrix(A12, A22),
+        add_matrix(B21, B22)
+    )
+
+    # Construct result quadrants
+
+    C11 = add_matrix(
+        subtract_matrix(
+            add_matrix(M1, M4),
+            M5
+        ),
+        M7
+    )
+
+    C12 = add_matrix(M3, M5)
+
+    C21 = add_matrix(M2, M4)
+
+    C22 = add_matrix(
+        add_matrix(
+            subtract_matrix(M1, M2),
+            M3
+        ),
+        M6
+    )
+
+    # Combine quadrants
+    C = []
+
+    for i in range(mid):
+        C.append(C11[i] + C12[i])
+
+    for i in range(mid):
+        C.append(C21[i] + C22[i])
+
+    return C
+
+
+# Find next power of two
+def next_power_of_two(n):
+    size = 1
+
+    while size < n:
+        size *= 2
+
+    return size
+
+
+# Strassen multiplication with padding
+def strassen_multiply(A, B):
+
+    n = len(A)
+
+    size = next_power_of_two(n)
+
+    # Pad matrices
+    A_padded = [
+        row + [0] * (size - n)
+        for row in A
+    ]
+
+    B_padded = [
+        row + [0] * (size - n)
+        for row in B
+    ]
+
+    # Add zero rows
+    while len(A_padded) < size:
+        A_padded.append([0] * size)
+
+    while len(B_padded) < size:
+        B_padded.append([0] * size)
+
+    # Strassen multiplication
+    C_padded = strassen_recursive(A_padded, B_padded)
+
+    # Remove padding
+    C = [
+        row[:n]
+        for row in C_padded[:n]
+    ]
+
+    return C
+
+
+# Benchmark both algorithms
+def benchmark(n):
+
+    A = random_matrix(n)
+    B = random_matrix(n)
+
+    # Standard multiplication
+    start = time.perf_counter()
+    standard_multiply(A, B)
+    standard_time = time.perf_counter() - start
+
+    # Strassen multiplication
+    start = time.perf_counter()
+    strassen_multiply(A, B)
+    strassen_time = time.perf_counter() - start
+
+    return standard_time, strassen_time
+
+
+# ---------------- MAIN PROGRAM ----------------
+
+# Correctness Test
+A, B = random_matrix(8), random_matrix(8)
+
+assert strassen_multiply(A, B) == standard_multiply(A, B)
+
+print("Correctness test passed!")
+
+
+# Benchmark Test
+std_t, strassen_t = benchmark(16)
+
+assert std_t >= 0
+assert strassen_t >= 0
+
+print("\nBenchmark Test for n = 16")
+print("Standard Time :", std_t, "seconds")
+print("Strassen Time :", strassen_t, "seconds")
+
+
+# Benchmark increasing matrix sizes
+sizes = [8, 16, 32, 64]
+
+print("\nPerformance Comparison")
+print("-" * 65)
+print(f"{'Size':<10}{'Standard (sec)':<20}"
+      f"{'Strassen (sec)':<20}{'Faster'}")
+print("-" * 65)
+
+for n in sizes:
+
+    std_time, strassen_time = benchmark(n)
+
+    if strassen_time < std_time:
+        faster = "Strassen"
+    else:
+        faster = "Standard"
+
+    print(
+        f"{n:<10}"
+        f"{std_time:<20.6f}"
+        f"{strassen_time:<20.6f}"
+        f"{faster}"
+    )
+
+print("-" * 65)
+print("All test cases passed!")
