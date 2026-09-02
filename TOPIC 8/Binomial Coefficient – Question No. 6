@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+int factorial(int n)
+{
+    int fact = 1;
+
+    for (int i = 1; i <= n; i++)
+    {
+        fact = fact * i;
+    }
+
+    return fact;
+}
+
+int main()
+{
+    int n = 15;
+    int r = 6;
+
+    int combination = factorial(n) /
+                      (factorial(r) * factorial(n - r));
+
+    printf("n = %d\n", n);
+    printf("r = %d\n", r);
+    printf("C(%d,%d) = %d\n", n, r, combination);
+
+    return 0;
+}
