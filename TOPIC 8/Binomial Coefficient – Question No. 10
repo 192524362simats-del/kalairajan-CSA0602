@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+int factorial(int n)
+{
+    int fact = 1;
+
+    for (int i = 1; i <= n; i++)
+    {
+        fact = fact * i;
+    }
+
+    return fact;
+}
+
+int main()
+{
+    int n = 20;
+    int r = 6;
+
+    int groups = factorial(n) /
+                 (factorial(r) * factorial(n - r));
+
+    printf("Total Volunteers = %d\n", n);
+    printf("Group Size = %d\n", r);
+    printf("Number of Groups = %d\n", groups);
+
+    return 0;
+}
