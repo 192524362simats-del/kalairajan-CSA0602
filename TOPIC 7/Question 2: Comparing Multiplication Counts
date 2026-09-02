@@ -1,0 +1,96 @@
+#include <stdio.h>
+
+// Count scalar multiplications used by standard multiplication
+long long count_multiplications_standard(int n) {
+    return (long long)n * n * n;
+}
+
+// Count scalar multiplications used by Strassen's algorithm
+long long count_multiplications_strassen(int n) {
+    int paddedSize = 1;
+    int levels = 0;
+
+    // Find the next power of 2
+    while (paddedSize < n) {
+        paddedSize *= 2;
+        levels++;
+    }
+
+    // Strassen uses 7 multiplications at each recursion level
+    long long count = 1;
+
+    for (int i = 0; i < levels; i++) {
+        count *= 7;
+    }
+
+    return count;
+}
+
+int main() {
+
+    // Test Case 1
+    printf("Test Case 1:\n");
+    printf("n = 2\n");
+    printf("Standard Multiplications = %lld\n",
+           count_multiplications_standard(2));
+    printf("Strassen Multiplications = %lld\n\n",
+           count_multiplications_strassen(2));
+
+    // Test Case 2
+    printf("Test Case 2:\n");
+    printf("n = 4\n");
+    printf("Standard Multiplications = %lld\n",
+           count_multiplications_standard(4));
+    printf("Strassen Multiplications = %lld\n\n",
+           count_multiplications_strassen(4));
+
+    // Test Case 3
+    printf("Test Case 3:\n");
+    printf("n = 64\n");
+    printf("Standard Multiplications = %lld\n",
+           count_multiplications_standard(64));
+    printf("Strassen Multiplications = %lld\n\n",
+           count_multiplications_strassen(64));
+
+    // Verify test cases
+    if (count_multiplications_strassen(2) == 7 &&
+        count_multiplications_standard(2) == 8 &&
+        count_multiplications_strassen(4) == 49 &&
+        count_multiplications_standard(4) == 64 &&
+        count_multiplications_strassen(64) <
+        count_multiplications_standard(64)) {
+
+        printf("All test cases passed!\n");
+    } else {
+        printf("Test cases failed!\n");
+    }
+
+    // Compare a range of matrix sizes
+    printf("\nComparison of Multiplication Counts:\n");
+    printf("------------------------------------------------\n");
+    printf("Size\tStandard\tStrassen\tBetter\n");
+    printf("------------------------------------------------\n");
+
+    int sizes[] = {2, 4, 8, 16, 32, 64, 128};
+    int count = sizeof(sizes) / sizeof(sizes[0]);
+
+    for (int i = 0; i < count; i++) {
+        int n = sizes[i];
+
+        long long standard =
+            count_multiplications_standard(n);
+
+        long long strassen =
+            count_multiplications_strassen(n);
+
+        printf("%d\t%lld\t\t%lld\t\t",
+               n, standard, strassen);
+
+        if (strassen < standard)
+            printf("Strassen\n");
+        else
+            printf("Standard\n");
+    }
+
+    return 0;
+}
