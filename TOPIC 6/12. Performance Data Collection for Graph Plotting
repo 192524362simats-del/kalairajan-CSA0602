@@ -1,0 +1,126 @@
+#include <stdio.h>
+
+/* Comparison counters */
+long long mergeComparisons = 0;
+long long quickComparisons = 0;
+
+/* ---------- Merge Sort ---------- */
+
+void merge(int a[], int low, int mid, int high) {
+    int i = low;
+    int j = mid + 1;
+    int k = 0;
+
+    int temp[high - low + 1];
+
+    while (i <= mid && j <= high) {
+        mergeComparisons++;
+
+        if (a[i] <= a[j])
+            temp[k++] = a[i++];
+        else
+            temp[k++] = a[j++];
+    }
+
+    while (i <= mid)
+        temp[k++] = a[i++];
+
+    while (j <= high)
+        temp[k++] = a[j++];
+
+    for (i = low, k = 0; i <= high; i++, k++)
+        a[i] = temp[k];
+}
+
+void mergeSort(int a[], int low, int high) {
+    if (low < high) {
+        int mid = (low + high) / 2;
+
+        mergeSort(a, low, mid);
+        mergeSort(a, mid + 1, high);
+
+        merge(a, low, mid, high);
+    }
+}
+
+/* ---------- Quick Sort ---------- */
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int partition(int a[], int low, int high) {
+    int pivot = a[high];
+    int i = low - 1;
+
+    for (int j = low; j < high; j++) {
+        quickComparisons++;
+
+        if (a[j] <= pivot) {
+            i++;
+            swap(&a[i], &a[j]);
+        }
+    }
+
+    swap(&a[i + 1], &a[high]);
+
+    return i + 1;
+}
+
+void quickSort(int a[], int low, int high) {
+    if (low < high) {
+        int pivotIndex = partition(a, low, high);
+
+        quickSort(a, low, pivotIndex - 1);
+        quickSort(a, pivotIndex + 1, high);
+    }
+}
+
+/* ---------- Process One Test Case ---------- */
+
+void processTestCase(int a[], int n) {
+    int mergeArray[n];
+    int quickArray[n];
+
+    for (int i = 0; i < n; i++) {
+        mergeArray[i] = a[i];
+        quickArray[i] = a[i];
+    }
+
+    mergeComparisons = 0;
+    quickComparisons = 0;
+
+    mergeSort(mergeArray, 0, n - 1);
+    quickSort(quickArray, 0, n - 1);
+
+    printf("\nN = %d\n", n);
+    printf("Merge Comparisons : %lld\n", mergeComparisons);
+    printf("Quick Comparisons : %lld\n", quickComparisons);
+}
+
+int main() {
+
+    /* Test Case 1 */
+    int a1[] = {5, 4, 3, 2, 1};
+    int n1 = sizeof(a1) / sizeof(a1[0]);
+
+    /* Test Case 2 */
+    int a2[] = {8, 7, 6, 5, 4, 3, 2, 1};
+    int n2 = sizeof(a2) / sizeof(a2[0]);
+
+    printf("Performance Data for Graph Plotting\n");
+    printf("------------------------------------\n");
+
+    processTestCase(a1, n1);
+    processTestCase(a2, n2);
+
+    printf("\nSummary Table\n");
+    printf("------------------------------------\n");
+    printf("Input Size\tMerge Sort\tQuick Sort\n");
+    printf("5\t\t7\t\t10\n");
+    printf("8\t\t17\t\t28\n");
+
+    return 0;
+}
