@@ -1,0 +1,87 @@
+def min_wrap_cost(words, width):
+    n = len(words)
+
+    # dp[i] = minimum cost for wrapping words[i:]
+    dp = [float('inf')] * (n + 1)
+
+    dp[n] = 0
+
+    for i in range(n - 1, -1, -1):
+        line_length = 0
+
+        for j in range(i, n):
+            if j == i:
+                line_length = words[j]
+            else:
+                line_length += 1 + words[j]
+
+            # Line is too long
+            if line_length > width:
+                break
+
+            # Last line has no penalty
+            if j == n - 1:
+                cost = 0
+            else:
+                extra_spaces = width - line_length
+                cost = extra_spaces ** 2
+
+            dp[i] = min(dp[i], cost + dp[j + 1])
+
+    return dp[0]
+
+
+def wrap_lines(words, width):
+    n = len(words)
+
+    dp = [float('inf')] * (n + 1)
+    choice = [-1] * n
+
+    dp[n] = 0
+
+    # Find optimal line breaks
+    for i in range(n - 1, -1, -1):
+        line_length = 0
+
+        for j in range(i, n):
+            if j == i:
+                line_length = words[j]
+            else:
+                line_length += 1 + words[j]
+
+            if line_length > width:
+                break
+
+            if j == n - 1:
+                cost = 0
+            else:
+                extra_spaces = width - line_length
+                cost = extra_spaces ** 2
+
+            total_cost = cost + dp[j + 1]
+
+            if total_cost < dp[i]:
+                dp[i] = total_cost
+                choice[i] = j
+
+    # Reconstruct the lines
+    lines = []
+    i = 0
+
+    while i < n:
+        j = choice[i]
+        lines.append(words[i:j + 1])
+        i = j + 1
+
+    return lines
+
+
+# Test Cases
+assert min_wrap_cost([3, 2, 2, 5], 6) == 10
+
+assert all(
+    sum(line) + len(line) - 1 <= 6
+    for line in wrap_lines([3, 2, 2, 5], 6)
+)
+
+print("All test cases passed!")
