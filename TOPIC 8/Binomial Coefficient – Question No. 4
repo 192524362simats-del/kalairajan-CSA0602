@@ -1,0 +1,34 @@
+#include <stdio.h>
+
+int binomialCoefficient(int n, int r) {
+    int dp[n + 1][r + 1];
+
+    for (int i = 0; i <= n; i++) {
+        for (int j = 0; j <= r && j <= i; j++) {
+
+            // Base cases
+            if (j == 0 || j == i) {
+                dp[i][j] = 1;
+            }
+            else {
+                // Pascal's identity
+                dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j];
+            }
+        }
+    }
+
+    return dp[n][r];
+}
+
+int main() {
+    int n = 10;
+    int r = 4;
+
+    int result = binomialCoefficient(n, r);
+
+    printf("n = %d\n", n);
+    printf("r = %d\n", r);
+    printf("C(%d,%d) = %d\n", n, r, result);
+
+    return 0;
+}
