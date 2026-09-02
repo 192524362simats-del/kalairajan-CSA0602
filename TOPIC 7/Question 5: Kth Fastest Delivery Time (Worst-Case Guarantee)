@@ -1,0 +1,85 @@
+def median_of_medians_select(arr, k):
+    """
+    Returns the k-th smallest element using
+    the Median-of-Medians selection algorithm.
+    k is zero-based.
+    """
+
+    if not 0 <= k < len(arr):
+        raise IndexError("k is out of range")
+
+    # Base case
+    if len(arr) <= 5:
+        return sorted(arr)[k]
+
+    # Divide into groups of 5
+    groups = [
+        arr[i:i + 5]
+        for i in range(0, len(arr), 5)
+    ]
+
+    # Find median of each group
+    medians = [
+        sorted(group)[len(group) // 2]
+        for group in groups
+    ]
+
+    # Find median of medians
+    pivot = median_of_medians_select(
+        medians,
+        len(medians) // 2
+    )
+
+    # Partition the array
+    low = [x for x in arr if x < pivot]
+    equal = [x for x in arr if x == pivot]
+    high = [x for x in arr if x > pivot]
+
+    # Select the required partition
+    if k < len(low):
+        return median_of_medians_select(low, k)
+
+    elif k < len(low) + len(equal):
+        return pivot
+
+    else:
+        new_k = k - len(low) - len(equal)
+        return median_of_medians_select(high, new_k)
+
+
+def kth_smallest_delivery_time(delivery_times, k):
+    """
+    Finds the k-th fastest delivery time.
+    k is zero-based.
+    """
+    return median_of_medians_select(delivery_times, k)
+
+
+# --------------------------------------------------
+# Test Case 1: Already Sorted Input
+# --------------------------------------------------
+
+already_sorted = list(range(1, 501))
+
+assert kth_smallest_delivery_time(already_sorted, 0) == 1
+assert kth_smallest_delivery_time(already_sorted, 499) == 500
+assert kth_smallest_delivery_time(already_sorted, 250) == 251
+
+
+# --------------------------------------------------
+# Test Case 2: Unsorted Delivery Times
+# --------------------------------------------------
+
+delivery_times = [
+    45, 30, 60, 25, 50,
+    40, 35, 55, 20, 65
+]
+
+assert (
+    kth_smallest_delivery_time(
+        delivery_times, 0
+    ) == min(delivery_times)
+)
+
+
+print("All test cases passed!")
