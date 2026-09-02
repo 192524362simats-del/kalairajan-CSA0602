@@ -1,0 +1,128 @@
+#include <stdio.h>
+#include <math.h>
+#include <float.h>
+
+struct City {
+    double x;
+    double y;
+};
+
+// Function to calculate distance between two cities
+double distance(struct City a, struct City b) {
+    double dx = a.x - b.x;
+    double dy = a.y - b.y;
+
+    return sqrt(dx * dx + dy * dy);
+}
+
+// Calculate total distance of a path
+double calculateDistance(struct City cities[], int path[], int n) {
+    double total = 0.0;
+
+    for (int i = 0; i < n - 1; i++) {
+        total += distance(cities[path[i]], cities[path[i + 1]]);
+    }
+
+    // Return to starting city
+    total += distance(cities[path[n - 1]], cities[path[0]]);
+
+    return total;
+}
+
+// Swap two integers
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// Exhaustive search using permutations
+void tsp(struct City cities[], int n) {
+    int path[10];
+    int bestPath[10];
+
+    double minDistance = DBL_MAX;
+
+    for (int i = 0; i < n; i++) {
+        path[i] = i;
+    }
+
+    // Generate permutations recursively
+    void generate(int start) {
+
+        if (start == n) {
+
+            double total = calculateDistance(cities, path, n);
+
+            if (total < minDistance) {
+                minDistance = total;
+
+                for (int i = 0; i < n; i++) {
+                    bestPath[i] = path[i];
+                }
+            }
+
+            return;
+        }
+
+        for (int i = start; i < n; i++) {
+            swap(&path[start], &path[i]);
+
+            generate(start + 1);
+
+            swap(&path[start], &path[i]);
+        }
+    }
+
+    generate(0);
+
+    printf("Shortest Distance: %.15f\n", minDistance);
+
+    printf("Shortest Path: [");
+
+    for (int i = 0; i < n; i++) {
+        printf("(%.0f,%.0f)",
+               cities[bestPath[i]].x,
+               cities[bestPath[i]].y);
+
+        printf(", ");
+    }
+
+    printf("(%.0f,%.0f)]\n",
+           cities[bestPath[0]].x,
+           cities[bestPath[0]].y);
+}
+
+int main() {
+
+    // Test Case 1
+    struct City cities1[] = {
+        {1, 2},
+        {4, 5},
+        {7, 1},
+        {3, 6}
+    };
+
+    int n1 = 4;
+
+    printf("Test Case 1:\n\n");
+    tsp(cities1, n1);
+
+    printf("\n");
+
+    // Test Case 2
+    struct City cities2[] = {
+        {2, 4},
+        {8, 1},
+        {1, 7},
+        {6, 3},
+        {5, 9}
+    };
+
+    int n2 = 5;
+
+    printf("Test Case 2:\n\n");
+    tsp(cities2, n2);
+
+    return 0;
+}
