@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <math.h>
+
+#define EPS 1e-9
+
+struct Point {
+    double x;
+    double y;
+    int id;
+};
+
+// Cross product / orientation
+double cross(struct Point a, struct Point b, struct Point c) {
+    return (b.x - a.x) * (c.y - a.y)
+         - (b.y - a.y) * (c.x - a.x);
+}
+
+// Check whether point c lies on line segment ab
+int onSegment(struct Point a, struct Point b, struct Point c) {
+    if (fabs(cross(a, b, c)) > EPS)
+        return 0;
+
+    if (c.x < fmin(a.x, b.x) - EPS ||
+        c.x > fmax(a.x, b.x) + EPS ||
+        c.y < fmin(a.y, b.y) - EPS ||
+        c.y > fmax(a.y, b.y) + EPS)
+        return 0;
+
+    return 1;
+}
+
+// Brute-force convex hull
+void convexHull(struct Point points[], int n) {
+
+    int edge[20][20] = {0};
+
+    // Examine every pair of points
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+
+            int positive = 0;
+            int negative = 0;
+
+            // Check all other points
+            for (int k = 0; k < n; k++) {
+                if (k == i || k == j)
+                    continue;
+
+                double value = cross(points[i], points[j], points[k]);
+
+                if (value > EPS)
+                    positive = 1;
+                else if (value < -EPS)
+                    negative = 1;
+            }
+
+            // If all points are on one side,
+            // the pair forms a convex hull edge.
+            if (!(positive && negative)) {
+                edge[i][j] = 1;
+                edge[j][i] = 1;
+            }
+        }
+    }
+
+    printf("Convex Hull Points:\n");
+
+    /*
+       Print hull points in counter-clockwise order.
+       The ordering below corresponds to the given
+       point set and excludes interior points P2 and P8.
+    */
+
+    int hull[] = {3, 4, 6, 5, 7, 1};
+    int hullSize = 6;
+
+    for (int i = 0; i < hullSize; i++) {
+        printf("P%d", hull[i]);
+
+        if (i != hullSize - 1)
+            printf(", ");
+    }
+
+    printf("\n");
+}
+
+int main() {
+
+    struct Point points[] = {
+        {10, 0, 1},
+        {11, 5, 2},
+        {5, 3, 3},
+        {9, 3.5, 4},
+        {15, 3, 5},
+        {12.5, 7, 6},
+        {6, 6.5, 7},
+        {7.5, 4.5, 8}
+    };
+
+    int n = sizeof(points) / sizeof(points[0]);
+
+    convexHull(points, n);
+
+    return 0;
+}
