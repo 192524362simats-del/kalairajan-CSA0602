@@ -1,0 +1,66 @@
+def lps_length(s):
+    n = len(s)
+
+    if n == 0:
+        return 0
+
+    # Rolling rows
+    prev = [1] * n
+    curr = [0] * n
+
+    # Calculate LPS
+    for length in range(2, n + 1):
+        for i in range(n - length + 1):
+            j = i + length - 1
+
+            if s[i] == s[j]:
+                if length == 2:
+                    curr[i] = 2
+                else:
+                    curr[i] = prev[i + 1] + 2
+            else:
+                curr[i] = max(prev[i], curr[i + 1])
+
+        prev, curr = curr, [0] * n
+
+    return prev[0]
+
+
+def audit_log(log, window_size, threshold):
+    results = []
+
+    # Slide the window across the log
+    for i in range(len(log) - window_size + 1):
+        window = log[i:i + window_size]
+
+        # Calculate LPS
+        lps = lps_length(window)
+
+        # Flag suspicious symmetric patterns
+        flagged = lps >= threshold
+
+        results.append((window, lps, flagged))
+
+    return results
+
+
+# Test Cases
+assert lps_length("bbbab") == 4
+assert lps_length("cbbd") == 2
+
+print("All test cases passed!")
+
+
+# Example log auditing
+log = "bbbabxyz"
+
+window_size = 5
+threshold = 4
+
+results = audit_log(log, window_size, threshold)
+
+print("\nLog Window Audit:")
+
+for window, lps, flagged in results:
+    status = "FLAGGED" if flagged else "Normal"
+    print(f"Window: {window} | LPS: {lps} | {status}")
