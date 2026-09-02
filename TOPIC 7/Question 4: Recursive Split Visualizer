@@ -1,0 +1,117 @@
+def karatsuba_traced(x, y, trace, depth=0):
+    """
+    Karatsuba multiplication that records
+    every recursive split in the trace list.
+    """
+
+    # Base case
+    if x < 10 or y < 10:
+        trace.append((
+            depth,
+            x,
+            y,
+            None,
+            None,
+            None,
+            None
+        ))
+        return x * y, trace
+
+    # Determine number of digits
+    n = max(len(str(x)), len(str(y)))
+    m = n // 2
+
+    power = 10 ** m
+
+    # Split x into high and low parts
+    high_x = x // power
+    low_x = x % power
+
+    # Split y into high and low parts
+    high_y = y // power
+    low_y = y % power
+
+    # Record this split
+    trace.append((
+        depth,
+        x,
+        y,
+        high_x,
+        low_x,
+        high_y,
+        low_y
+    ))
+
+    # Three recursive multiplications
+    z2, trace = karatsuba_traced(
+        high_x,
+        high_y,
+        trace,
+        depth + 1
+    )
+
+    z0, trace = karatsuba_traced(
+        low_x,
+        low_y,
+        trace,
+        depth + 1
+    )
+
+    z1, trace = karatsuba_traced(
+        high_x + low_x,
+        high_y + low_y,
+        trace,
+        depth + 1
+    )
+
+    # Calculate middle term
+    z1 = z1 - z2 - z0
+
+    # Combine results
+    result = (
+        z2 * (10 ** (2 * m))
+        + z1 * (10 ** m)
+        + z0
+    )
+
+    return result, trace
+
+
+# ---------------------------------------------------------
+# Test Case
+# ---------------------------------------------------------
+
+trace = []
+
+result, trace = karatsuba_traced(1234, 56, trace)
+
+assert result == 1234 * 56
+assert len(trace) > 0
+assert trace[0][0] == 0
+
+print("Karatsuba Recursive Split Visualizer")
+print("-------------------------------------")
+
+print("Input:")
+print("1234 × 56")
+
+print("\nResult:")
+print(result)
+
+print("\nRecursion Trace:")
+print("Depth | x    | y    | High-X | Low-X | High-Y | Low-Y")
+
+for entry in trace:
+    depth, x, y, high_x, low_x, high_y, low_y = entry
+
+    print(
+        f"{depth:5} | "
+        f"{x:4} | "
+        f"{y:4} | "
+        f"{str(high_x):6} | "
+        f"{str(low_x):5} | "
+        f"{str(high_y):6} | "
+        f"{str(low_y):5}"
+    )
+
+print("\nAll test cases passed!")
