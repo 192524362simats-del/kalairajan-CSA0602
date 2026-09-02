@@ -1,0 +1,79 @@
+#include <stdio.h>
+
+struct Point {
+    int x;
+    int y;
+};
+
+// Function to find orientation of three points
+int orientation(struct Point p, struct Point q, struct Point r) {
+    int value = (q.y - p.y) * (r.x - q.x)
+              - (q.x - p.x) * (r.y - q.y);
+
+    if (value == 0)
+        return 0;       // Collinear
+    else if (value > 0)
+        return 1;       // Clockwise
+    else
+        return 2;       // Counter-clockwise
+}
+
+// Function to find convex hull
+void convexHull(struct Point points[], int n) {
+
+    int hull[20];
+    int hullSize = 0;
+
+    // Find the leftmost point
+    int leftmost = 0;
+
+    for (int i = 1; i < n; i++) {
+        if (points[i].x < points[leftmost].x)
+            leftmost = i;
+    }
+
+    int p = leftmost;
+
+    do {
+        hull[hullSize++] = p;
+
+        int q = (p + 1) % n;
+
+        for (int i = 0; i < n; i++) {
+            if (orientation(points[p], points[i], points[q]) == 2)
+                q = i;
+        }
+
+        p = q;
+
+    } while (p != leftmost);
+
+    printf("Convex Hull Points:\n");
+
+    for (int i = 0; i < hullSize; i++) {
+        printf("(%d,%d)", points[hull[i]].x, points[hull[i]].y);
+
+        if (i != hullSize - 1)
+            printf(", ");
+    }
+
+    printf("\n");
+}
+
+int main() {
+
+    struct Point points[] = {
+        {2, 2},
+        {4, 1},
+        {6, 3},
+        {5, 5},
+        {3, 6},
+        {1, 4}
+    };
+
+    int n = sizeof(points) / sizeof(points[0]);
+
+    convexHull(points, n);
+
+    return 0;
+}
