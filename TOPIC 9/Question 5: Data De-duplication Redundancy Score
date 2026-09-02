@@ -1,0 +1,55 @@
+def is_compression_candidate(s):
+    n = len(s)
+
+    # Empty string is not a compression candidate
+    if n == 0:
+        return False
+
+    # Rolling rows for LPS
+    prev = [0] * n
+    curr = [0] * n
+
+    # Single characters have LPS length 1
+    for i in range(n):
+        prev[i] = 1
+
+    # Calculate LPS
+    for length in range(2, n + 1):
+        for i in range(n - length + 1):
+            j = i + length - 1
+
+            if s[i] == s[j]:
+                if length == 2:
+                    curr[i] = 2
+                else:
+                    curr[i] = prev[i + 1] + 2
+            else:
+                curr[i] = max(prev[i], curr[i + 1])
+
+        prev, curr = curr, [0] * n
+
+    # LPS length
+    lps = prev[0]
+
+    # Calculate redundancy score
+    redundancy_score = lps - (n / 2)
+
+    # Positive score means compression candidate
+    return redundancy_score > 0
+
+
+# Test Cases
+assert is_compression_candidate("bbbab") == True
+assert is_compression_candidate("cbbd") == False
+
+print("All test cases passed!")
+
+
+# Display results
+strings = ["bbbab", "cbbd"]
+
+for s in strings:
+    print(
+        f"{s}: "
+        f"Compression Candidate = {is_compression_candidate(s)}"
+    )
