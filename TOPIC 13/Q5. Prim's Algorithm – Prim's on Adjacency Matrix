@@ -1,0 +1,46 @@
+import heapq
+
+def prim_adjacency_matrix(n, matrix, start=0):
+    visited = [False] * n
+    key = [float('inf')] * n
+    parent = [-1] * n
+    key[start] = 0
+    
+    min_heap = [(0, start)]
+    mst_edges = []
+    total_weight = 0
+    
+    while min_heap:
+        weight, u = heapq.heappop(min_heap)
+        
+        if visited[u]:
+            continue
+        
+        visited[u] = True
+        
+        if parent[u] != -1:
+            mst_edges.append((parent[u], u, weight))
+            total_weight += weight
+        
+        for v in range(n):
+            if matrix[u][v] != 0 and not visited[v] and matrix[u][v] < key[v]:
+                key[v] = matrix[u][v]
+                parent[v] = u
+                heapq.heappush(min_heap, (key[v], v))
+    
+    return parent, mst_edges, total_weight
+
+n = 5
+matrix = [
+    [0, 2, 0, 6, 0],
+    [2, 0, 3, 8, 5],
+    [0, 3, 0, 0, 7],
+    [6, 8, 0, 0, 9],
+    [0, 5, 7, 9, 0]
+]
+
+parent, mst_edges, total_weight = prim_adjacency_matrix(n, matrix)
+
+print(f"parent[]: {parent}")
+print(f"MST edges: {mst_edges}")
+print(f"Total weight: {total_weight}")
