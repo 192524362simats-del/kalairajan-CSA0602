@@ -1,0 +1,19 @@
+//Coin Change – Parking Meter
+#include<stdio.h>
+int main()
+{
+    int coins[]={1,5,10,25};
+    int amount=63,i,count=0;
+    printf("Coins used: ");
+    for(i=3;i>=0;i--)
+    {
+        while(amount>=coins[i])
+        {
+            printf("%d ",coins[i]);
+            amount-=coins[i];
+            count++;
+        }
+    }
+    printf("\nMinimum coins = %d\n",count);
+    return 0;
+}
