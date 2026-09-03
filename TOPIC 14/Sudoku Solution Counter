@@ -1,0 +1,114 @@
+def is_safe(grid, row, col, num):
+    # Check row
+    for j in range(9):
+        if grid[row][j] == num:
+            return False
+    
+    # Check column
+    for i in range(9):
+        if grid[i][col] == num:
+            return False
+    
+    # Check 3x3 box
+    start_row = (row // 3) * 3
+    start_col = (col // 3) * 3
+    for i in range(start_row, start_row + 3):
+        for j in range(start_col, start_col + 3):
+            if grid[i][j] == num:
+                return False
+    
+    return True
+
+def count_sudoku_solutions(grid):
+    # Make a copy to avoid modifying original
+    grid_copy = [row[:] for row in grid]
+    solution_count = 0
+    
+    def solve(grid):
+        nonlocal solution_count
+        
+        # Find empty cell
+        for i in range(9):
+            for j in range(9):
+                if grid[i][j] == 0:
+                    # Try numbers 1-9
+                    for num in range(1, 10):
+                        if is_safe(grid, i, j, num):
+                            grid[i][j] = num
+                            solve(grid)
+                            grid[i][j] = 0
+                    return  # Backtrack if no number works
+        
+        # No empty cells found → valid solution
+        solution_count += 1
+    
+    solve(grid_copy)
+    return solution_count
+
+# Test case 1: Unique solution (standard puzzle)
+grid1 = [
+    [5, 3, 0, 0, 7, 0, 0, 0, 0],
+    [6, 0, 0, 1, 9, 5, 0, 0, 0],
+    [0, 9, 8, 0, 0, 0, 0, 6, 0],
+    [8, 0, 0, 0, 6, 0, 0, 0, 3],
+    [4, 0, 0, 8, 0, 3, 0, 0, 1],
+    [7, 0, 0, 0, 2, 0, 0, 0, 6],
+    [0, 6, 0, 0, 0, 0, 2, 8, 0],
+    [0, 0, 0, 4, 1, 9, 0, 0, 5],
+    [0, 0, 0, 0, 8, 0, 0, 7, 9]
+]
+
+# Test case 2: Empty grid (multiple solutions)
+grid2 = [[0] * 9 for _ in range(9)]
+
+# Test case 3: Invalid/unsolvable puzzle
+grid3 = [
+    [5, 3, 0, 0, 7, 0, 0, 0, 5],  # Duplicate 5 in row
+    [6, 0, 0, 1, 9, 5, 0, 0, 0],
+    [0, 9, 8, 0, 0, 0, 0, 6, 0],
+    [8, 0, 0, 0, 6, 0, 0, 0, 3],
+    [4, 0, 0, 8, 0, 3, 0, 0, 1],
+    [7, 0, 0, 0, 2, 0, 0, 0, 6],
+    [0, 6, 0, 0, 0, 0, 2, 8, 0],
+    [0, 0, 0, 4, 1, 9, 0, 0, 5],
+    [0, 0, 0, 0, 8, 0, 0, 7, 9]
+]
+
+print("Test 1 - Standard Sudoku:")
+solutions = count_sudoku_solutions(grid1)
+print(f"Number of Valid Solutions = {solutions}")
+print()
+
+print("Test 2 - Empty Grid (first few solutions):")
+# Empty grid has many solutions - let's count up to a limit
+def count_sudoku_solutions_limit(grid, limit=10):
+    grid_copy = [row[:] for row in grid]
+    solution_count = 0
+    
+    def solve(grid):
+        nonlocal solution_count
+        if solution_count >= limit:
+            return
+        
+        for i in range(9):
+            for j in range(9):
+                if grid[i][j] == 0:
+                    for num in range(1, 10):
+                        if is_safe(grid, i, j, num):
+                            grid[i][j] = num
+                            solve(grid)
+                            grid[i][j] = 0
+                    return
+        
+        solution_count += 1
+    
+    solve(grid_copy)
+    return solution_count
+
+solutions_limit = count_sudoku_solutions_limit(grid2, limit=5)
+print(f"At least {solutions_limit} solutions found (limited search)")
+print()
+
+print("Test 3 - Invalid/Unsolvable Puzzle:")
+solutions = count_sudoku_solutions(grid3)
+print(f"Number of Valid Solutions = {solutions}")
