@@ -1,0 +1,26 @@
+def job_sequencing(jobs, deadlines, profits):
+    job_list = list(zip(jobs, deadlines, profits))
+    job_list.sort(key=lambda x: x[2], reverse=True)
+    
+    max_deadline = max(deadlines)
+    slots = [-1] * (max_deadline + 1)
+    selected = []
+    total = 0
+    
+    for job, dl, profit in job_list:
+        for t in range(dl, 0, -1):
+            if slots[t] == -1:
+                slots[t] = job
+                selected.append(job)
+                total += profit
+                break
+    
+    return selected, total
+
+jobs = ['P1', 'P2', 'P3', 'P4']
+deadlines = [1, 1, 2, 2]
+profits = [40, 30, 20, 10]
+
+selected, max_profit = job_sequencing(jobs, deadlines, profits)
+print(f"Selected jobs = {' '.join(selected)}")
+print(f"Maximum profit = {max_profit}")
