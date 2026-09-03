@@ -1,0 +1,56 @@
+import heapq
+
+def dijkstra_all_analysis(n, source, edges):
+    # Build adjacency list
+    graph = [[] for _ in range(n)]
+    for u, v, w in edges:
+        graph[u].append((v, w))
+        graph[v].append((u, w))
+    
+    dist = [float('inf')] * n
+    parent = [-1] * n
+    dist[source] = 0
+    
+    pq = [(0, source)]
+    
+    while pq:
+        curr_dist, u = heapq.heappop(pq)
+        
+        if curr_dist > dist[u]:
+            continue
+        
+        for v, w in graph[u]:
+            new_dist = curr_dist + w
+            if new_dist < dist[v]:
+                dist[v] = new_dist
+                parent[v] = u
+                heapq.heappush(pq, (new_dist, v))
+    
+    # Find hardest vertex (max distance)
+    hardest = -1
+    max_dist = -1
+    for i in range(n):
+        if dist[i] != float('inf') and dist[i] > max_dist:
+            max_dist = dist[i]
+            hardest = i
+    
+    # Reconstruct path to hardest
+    path = []
+    curr = hardest
+    while curr != -1:
+        path.append(curr)
+        curr = parent[curr]
+    path = path[::-1]
+    
+    return dist, hardest, max_dist, path
+
+n = 6
+source = 0
+edges = [(0,1,2), (0,2,4), (1,2,1), (1,3,7), (2,4,3), 
+         (3,5,1), (4,3,2), (4,5,5)]
+
+dist, hardest, max_dist, path = dijkstra_all_analysis(n, source, edges)
+
+print(f"Distances: {dist}")
+print(f"Hardest vertex to reach: {hardest} (distance = {max_dist})")
+print(f"Path to {hardest}: {' → '.join(map(str, path))}")
