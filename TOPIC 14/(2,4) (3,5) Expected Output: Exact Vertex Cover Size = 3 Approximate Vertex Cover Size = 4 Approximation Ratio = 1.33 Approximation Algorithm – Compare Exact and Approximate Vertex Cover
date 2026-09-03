@@ -1,0 +1,69 @@
+def exact_vertex_cover(edges, n):
+    # Use brute force to find exact minimum vertex cover
+    min_cover = None
+    min_size = float('inf')
+    
+    # Try all subsets of vertices
+    for mask in range(1 << n):
+        cover = []
+        for i in range(n):
+            if mask & (1 << i):
+                cover.append(i)
+        
+        # Check if this cover covers all edges
+        covers_all = True
+        for u, v in edges:
+            if u not in cover and v not in cover:
+                covers_all = False
+                break
+        
+        if covers_all and len(cover) < min_size:
+            min_size = len(cover)
+            min_cover = cover
+    
+    return sorted(min_cover)
+
+def approximate_vertex_cover(edges, n):
+    remaining_edges = edges[:]
+    vertex_cover = set()
+    
+    while remaining_edges:
+        # Find vertex with maximum degree
+        degree = [0] * n
+        for u, v in remaining_edges:
+            degree[u] += 1
+            degree[v] += 1
+        
+        max_degree = max(degree)
+        if max_degree == 0:
+            break
+        
+        v = degree.index(max_degree)
+        vertex_cover.add(v)
+        
+        # Remove all edges incident to v
+        remaining_edges = [e for e in remaining_edges if e[0] != v and e[1] != v]
+    
+    return sorted(vertex_cover)
+
+n = 6
+edges = [(0,1), (0,2), (1,3), (2,4), (3,5)]
+
+# Compute exact cover
+exact_cover = exact_vertex_cover(edges, n)
+exact_size = len(exact_cover)
+
+# Compute approximate cover
+approx_cover = approximate_vertex_cover(edges, n)
+approx_size = len(approx_cover)
+
+# Calculate approximation ratio
+ratio = approx_size / exact_size
+
+print(f"Exact Vertex Cover: {{{','.join(map(str, exact_cover))}}}")
+print(f"Exact Vertex Cover Size = {exact_size}")
+print()
+print(f"Approximate Vertex Cover: {{{','.join(map(str, approx_cover))}}}")
+print(f"Approximate Vertex Cover Size = {approx_size}")
+print()
+print(f"Approximation Ratio = {ratio:.2f}")
