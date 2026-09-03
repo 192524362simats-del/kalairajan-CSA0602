@@ -1,0 +1,19 @@
+//Coin Change – Ticket Counter
+#include<stdio.h>
+int main()
+{
+    int coins[]={1,3,7,10};
+    int amount=24,i,count=0;
+    printf("Coins used: ");
+    for(i=3;i>=0;i--)
+    {
+        while(amount>=coins[i])
+        {
+            printf("%d ",coins[i]);
+            amount-=coins[i];
+            count++;
+        }
+    }
+    printf("\nMinimum coins = %d\n",count);
+    return 0;
+}
