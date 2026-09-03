@@ -1,0 +1,53 @@
+//Job Sequencing – Exam Paper Evaluation
+#include<stdio.h>
+int main()
+{
+    char jobs[]={'J','J','J','J','J'};
+    int jobNo[]={1,2,3,4,5};
+    int deadlines[]={2,1,2,1,3};
+    int profits[]={20,15,10,5,1};
+    int n=5,i,j,tempP,tempD,tempN,maxDeadline=0;
+    for(i=0;i<n;i++)
+        if(deadlines[i]>maxDeadline)
+            maxDeadline=deadlines[i];
+    for(i=0;i<n-1;i++)
+    {
+        for(j=i+1;j<n;j++)
+        {
+            if(profits[i]<profits[j])
+            {
+                tempP=profits[i];
+                profits[i]=profits[j];
+                profits[j]=tempP;
+                tempD=deadlines[i];
+                deadlines[i]=deadlines[j];
+                deadlines[j]=tempD;
+                tempN=jobNo[i];
+                jobNo[i]=jobNo[j];
+                jobNo[j]=tempN;
+            }
+        }
+    }
+    int slot[maxDeadline+1];
+    for(i=0;i<=maxDeadline;i++)
+        slot[i]=-1;
+    int totalProfit=0;
+    for(i=0;i<n;i++)
+    {
+        for(j=deadlines[i];j>0;j--)
+        {
+            if(slot[j]==-1)
+            {
+                slot[j]=i;
+                totalProfit+=profits[i];
+                break;
+            }
+        }
+    }
+    printf("Selected jobs = ");
+    for(i=1;i<=maxDeadline;i++)
+        if(slot[i]!=-1)
+            printf("J%d ",jobNo[slot[i]]);
+    printf("\nMaximum profit = %d\n",totalProfit);
+    return 0;
+}
