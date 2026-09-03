@@ -1,0 +1,56 @@
+def is_safe(v, pos, path, graph, n):
+    # Check if vertex is adjacent to previous vertex
+    if graph[path[pos - 1]][v] == 0:
+        return False
+    
+    # Check if vertex already visited
+    if v in path:
+        return False
+    
+    return True
+
+def hamiltonian_path_util(graph, path, pos, n):
+    # If all vertices are included
+    if pos == n:
+        return True
+    
+    # Try different vertices as next candidate
+    for v in range(n):
+        if is_safe(v, pos, path, graph, n):
+            path[pos] = v
+            if hamiltonian_path_util(graph, path, pos + 1, n):
+                return True
+            path[pos] = -1
+    
+    return False
+
+def hamiltonian_path(graph):
+    n = len(graph)
+    
+    # Try starting from each vertex
+    for start in range(n):
+        path = [-1] * n
+        path[0] = start
+        
+        if hamiltonian_path_util(graph, path, 1, n):
+            return path
+    
+    return None
+
+# Build graph from edges
+n = 5
+edges = [(0,1), (1,2), (2,3), (3,4)]
+
+# Create adjacency matrix
+graph = [[0] * n for _ in range(n)]
+for u, v in edges:
+    graph[u][v] = 1
+    graph[v][u] = 1
+
+path = hamiltonian_path(graph)
+
+if path:
+    print("Hamiltonian Path:")
+    print(' → '.join(map(str, path)))
+else:
+    print("Hamiltonian Path does not exist")
