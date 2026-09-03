@@ -1,0 +1,53 @@
+//Job Sequencing – Software Company Tasks
+#include<stdio.h>
+int main()
+{
+    char jobs[]={'A','B','C','D'};
+    int deadlines[]={2,1,2,1};
+    int profits[]={100,19,27,25};
+    int n=4,i,j,tempP,tempD,maxDeadline=0;
+    char tempJ;
+    for(i=0;i<n;i++)
+        if(deadlines[i]>maxDeadline)
+            maxDeadline=deadlines[i];
+    for(i=0;i<n-1;i++)
+    {
+        for(j=i+1;j<n;j++)
+        {
+            if(profits[i]<profits[j])
+            {
+                tempP=profits[i];
+                profits[i]=profits[j];
+                profits[j]=tempP;
+                tempD=deadlines[i];
+                deadlines[i]=deadlines[j];
+                deadlines[j]=tempD;
+                tempJ=jobs[i];
+                jobs[i]=jobs[j];
+                jobs[j]=tempJ;
+            }
+        }
+    }
+    int slot[maxDeadline+1];
+    for(i=0;i<=maxDeadline;i++)
+        slot[i]=-1;
+    int totalProfit=0;
+    for(i=0;i<n;i++)
+    {
+        for(j=deadlines[i];j>0;j--)
+        {
+            if(slot[j]==-1)
+            {
+                slot[j]=i;
+                totalProfit+=profits[i];
+                break;
+            }
+        }
+    }
+    printf("Selected jobs = ");
+    for(i=1;i<=maxDeadline;i++)
+        if(slot[i]!=-1)
+            printf("%c ",jobs[slot[i]]);
+    printf("\nMaximum profit = %d\n",totalProfit);
+    return 0;
+}
