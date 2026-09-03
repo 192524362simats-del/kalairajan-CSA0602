@@ -1,0 +1,49 @@
+def greedy_coloring(edges, n):
+    # Build adjacency list
+    adj = [[] for _ in range(n)]
+    for u, v in edges:
+        adj[u].append(v)
+        adj[v].append(u)
+    
+    # Assign first color to first vertex
+    colors = [-1] * n
+    colors[0] = 1
+    
+    # Store available colors
+    available = [False] * n
+    
+    # Assign colors to remaining vertices
+    for v in range(1, n):
+        # Mark colors of adjacent vertices as unavailable
+        for neighbor in adj[v]:
+            if colors[neighbor] != -1:
+                available[colors[neighbor]] = True
+        
+        # Find the first available color
+        color = 1
+        while available[color]:
+            color += 1
+        
+        colors[v] = color
+        
+        # Reset available array
+        for neighbor in adj[v]:
+            if colors[neighbor] != -1:
+                available[colors[neighbor]] = False
+    
+    # Count total colors used
+    total_colors = len(set(colors))
+    
+    return colors, total_colors
+
+# Input
+n = 5
+edges = [(0,1), (0,2), (1,2), (1,3), (2,4)]
+
+colors, total_colors = greedy_coloring(edges, n)
+
+print("Coloring Results:")
+for i in range(n):
+    print(f"Vertex {i} → Color {colors[i]}")
+
+print(f"\nTotal Colors Used = {total_colors}")
