@@ -1,0 +1,46 @@
+import heapq
+
+def huffman_coding(chars, freqs):
+    # Create node class
+    class Node:
+        def __init__(self, char, freq):
+            self.char = char
+            self.freq = freq
+            self.left = None
+            self.right = None
+        
+        def __lt__(self, other):
+            return self.freq < other.freq
+    
+    # Build heap
+    heap = []
+    for i in range(len(chars)):
+        heapq.heappush(heap, Node(chars[i], freqs[i]))
+    
+    # Build Huffman tree
+    while len(heap) > 1:
+        left = heapq.heappop(heap)
+        right = heapq.heappop(heap)
+        parent = Node(None, left.freq + right.freq)
+        parent.left = left
+        parent.right = right
+        heapq.heappush(heap, parent)
+    
+    # Generate codes
+    codes = {}
+    def generate_codes(node, code):
+        if node:
+            if node.char:
+                codes[node.char] = code
+            generate_codes(node.left, code + '0')
+            generate_codes(node.right, code + '1')
+    
+    generate_codes(heap[0], '')
+    return codes
+
+chars = ['a', 'b', 'c', 'd', 'e', 'f']
+freqs = [5, 9, 12, 13, 16, 45]
+
+codes = huffman_coding(chars, freqs)
+for char in chars:
+    print(f"{char}: {codes[char]}")
