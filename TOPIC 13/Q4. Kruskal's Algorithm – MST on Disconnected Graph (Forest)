@@ -1,0 +1,67 @@
+class DSU:
+    def __init__(self, n):
+        self.parent = list(range(n))
+        self.rank = [0] * n
+    
+    def find(self, x):
+        if self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])
+        return self.parent[x]
+    
+    def union(self, x, y):
+        px, py = self.find(x), self.find(y)
+        if px == py:
+            return False
+        if self.rank[px] < self.rank[py]:
+            self.parent[px] = py
+        elif self.rank[px] > self.rank[py]:
+            self.parent[py] = px
+        else:
+            self.parent[py] = px
+            self.rank[px] += 1
+        return True
+
+def kruskal_forest(n, edges):
+    # Filter out self-loops
+    edges = [(u, v, w) for u, v, w in edges if u != v]
+    edges.sort(key=lambda x: x[2])
+    
+    dsu = DSU(n)
+    components = {}
+    total_weight = 0
+    
+    for u, v, w in edges:
+        if dsu.union(u, v):
+            root = dsu.find(u)
+            if root not in components:
+                components[root] = []
+            components[root].append((u, v, w))
+            total_weight += w
+    
+    # Find all vertices and their components
+    vertex_components = {}
+    for i in range(n):
+        root = dsu.find(i)
+        if root not in vertex_components:
+            vertex_components[root] = []
+        vertex_components[root].append(i)
+    
+    return components, vertex_components, total_weight
+
+n = 7
+edges = [(0,1,3), (0,2,5), (1,2,2), (3,4,4), (3,5,6), (4,5,1), (6,6,0)]
+
+components, vertex_components, total_weight = kruskal_forest(n, edges)
+
+# Display results
+comp_num = 1
+for root, vertices in vertex_components.items():
+    if len(vertices) == 1:
+        print(f"Component {comp_num}: isolated vertex {vertices[0]}")
+    else:
+        mst_edges = components.get(root, [])
+        weight = sum(w for _, _, w in mst_edges)
+        print(f"Component {comp_num} MST edges: {mst_edges}  weight: {weight}")
+    comp_num += 1
+
+print(f"Total MST (spanning forest) weight: {total_weight}")
