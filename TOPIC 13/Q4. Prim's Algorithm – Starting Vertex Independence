@@ -1,0 +1,42 @@
+import heapq
+
+def prim_mst(n, start, edges):
+    graph = [[] for _ in range(n)]
+    for u, v, w in edges:
+        graph[u].append((v, w))
+        graph[v].append((u, w))
+    
+    visited = [False] * n
+    min_heap = [(0, start, -1)]
+    mst_edges = []
+    total_weight = 0
+    
+    while min_heap and len(mst_edges) < n - 1:
+        weight, u, parent = heapq.heappop(min_heap)
+        if visited[u]:
+            continue
+        visited[u] = True
+        if parent != -1:
+            mst_edges.append((parent, u, weight))
+            total_weight += weight
+        for v, w in graph[u]:
+            if not visited[v]:
+                heapq.heappush(min_heap, (w, v, u))
+    
+    return sorted(mst_edges), total_weight
+
+n = 4
+edges = [(0,1,3), (0,3,7), (1,2,2), (1,3,5), (2,3,1)]
+
+start_vertices = [0, 1, 2]
+weights = []
+
+for start in start_vertices:
+    mst_edges, weight = prim_mst(n, start, edges)
+    weights.append(weight)
+    print(f"MST weight (start={start}): {weight}   edges: {mst_edges}")
+
+if all(w == weights[0] for w in weights):
+    print(f"Yes — same total weight {weights[0]} regardless of start vertex.")
+else:
+    print("No — different total weights for different start vertices.")
