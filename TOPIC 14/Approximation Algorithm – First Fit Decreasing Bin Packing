@@ -1,0 +1,54 @@
+def first_fit_decreasing(items, bin_capacity):
+    # Sort items in decreasing order
+    sorted_items = sorted(items, reverse=True)
+    print(f"Sorted Items:\n{sorted_items}\n")
+    
+    # Initialize bins
+    bins = []
+    
+    # Place each item using first-fit strategy
+    for item in sorted_items:
+        placed = False
+        # Try to place in existing bins
+        for i in range(len(bins)):
+            if bins[i] + item <= bin_capacity:
+                bins[i] += item
+                placed = True
+                break
+        
+        # If not placed, create new bin
+        if not placed:
+            bins.append(item)
+    
+    return bins, len(bins)
+
+# Input
+bin_capacity = 10
+items = [2, 5, 4, 7, 1, 3, 8]
+
+bins, total_bins = first_fit_decreasing(items, bin_capacity)
+
+# Display bins with actual items (reconstruct which items go where)
+def display_bins_with_items(items, bin_capacity):
+    sorted_items = sorted(items, reverse=True)
+    bins_content = []
+    
+    for item in sorted_items:
+        placed = False
+        for i in range(len(bins_content)):
+            if sum(bins_content[i]) + item <= bin_capacity:
+                bins_content[i].append(item)
+                placed = True
+                break
+        
+        if not placed:
+            bins_content.append([item])
+    
+    return bins_content
+
+bins_content = display_bins_with_items(items, bin_capacity)
+
+for i, bin_items in enumerate(bins_content, 1):
+    print(f"Bin {i}: {' '.join(map(str, bin_items))}")
+
+print(f"\nTotal Bins Used = {len(bins_content)}")
