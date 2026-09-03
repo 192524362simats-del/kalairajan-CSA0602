@@ -1,0 +1,32 @@
+def job_sequencing(jobs, deadlines, profits):
+    n = len(jobs)
+    max_deadline = max(deadlines)
+    
+    # Sort jobs by profit descending
+    job_list = list(zip(jobs, deadlines, profits))
+    job_list.sort(key=lambda x: x[2], reverse=True)
+    
+    # Slots array to track occupied time slots
+    slots = [-1] * (max_deadline + 1)
+    selected_jobs = []
+    total_profit = 0
+    
+    for job, deadline, profit in job_list:
+        # Find the latest free slot before deadline
+        for t in range(deadline, 0, -1):
+            if slots[t] == -1:
+                slots[t] = job
+                selected_jobs.append(job)
+                total_profit += profit
+                break
+    
+    return selected_jobs, total_profit
+
+# Test case
+jobs = ['A', 'B', 'C', 'D', 'E']
+deadlines = [2, 1, 2, 1, 3]
+profits = [100, 50, 10, 20, 30]
+
+selected, max_profit = job_sequencing(jobs, deadlines, profits)
+print(f"Selected jobs = {' '.join(selected)}")
+print(f"Maximum profit = {max_profit}")
