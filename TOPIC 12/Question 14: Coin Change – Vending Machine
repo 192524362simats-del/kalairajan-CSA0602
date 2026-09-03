@@ -1,0 +1,19 @@
+def coin_change(coins, amount):
+    coins.sort(reverse=True)
+    result = []
+    count = 0
+    
+    for coin in coins:
+        while amount >= coin:
+            result.append(coin)
+            amount -= coin
+            count += 1
+    
+    return result, count
+
+coins = [1, 2, 5]
+amount = 11
+
+change, min_coins = coin_change(coins, amount)
+print(' '.join(map(str, change)))
+print(f"Minimum coins = {min_coins}")
