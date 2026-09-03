@@ -1,0 +1,57 @@
+def is_safe(v, pos, path, graph, n):
+    if graph[path[pos - 1]][v] == 0:
+        return False
+    if v in path:
+        return False
+    return True
+
+def hamiltonian_cycles_util(graph, path, pos, n, cycles):
+    if pos == n:
+        if graph[path[pos - 1]][path[0]] == 1:
+            cycles.append(path[:])
+        return
+    
+    for v in range(1, n):
+        if is_safe(v, pos, path, graph, n):
+            path[pos] = v
+            hamiltonian_cycles_util(graph, path, pos + 1, n, cycles)
+            path[pos] = -1
+
+def all_hamiltonian_cycles(graph):
+    n = len(graph)
+    cycles = []
+    
+    # Fix first vertex as 0 to avoid duplicates
+    path = [-1] * n
+    path[0] = 0
+    
+    hamiltonian_cycles_util(graph, path, 1, n, cycles)
+    
+    # Remove reverse duplicates (0→1→2→3→0 is same as 0→3→2→1→0)
+    unique_cycles = []
+    for cycle in cycles:
+        # Create reverse cycle for comparison
+        reverse = [cycle[0]] + cycle[:0:-1]
+        if reverse not in unique_cycles:
+            unique_cycles.append(cycle)
+    
+    return unique_cycles
+
+def print_cycle(cycle):
+    print(' → '.join(map(str, cycle)) + ' → ' + str(cycle[0]))
+
+# Build complete graph K4
+n = 4
+graph = [[0] * n for _ in range(n)]
+for i in range(n):
+    for j in range(n):
+        if i != j:
+            graph[i][j] = 1
+
+cycles = all_hamiltonian_cycles(graph)
+
+print("Hamiltonian Cycles:")
+for cycle in cycles:
+    print_cycle(cycle)
+
+print(f"Total Cycles = {len(cycles)}")
